@@ -7,7 +7,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,11 +35,19 @@ import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
 import com.bytedance.sdk.open.douyin.model.ContactHtmlObject;
 import com.bytedance.sdk.open.douyin.model.OpenRecord;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CODE_KEY = "code";
@@ -47,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     OpenRecord.Request request = new OpenRecord.Request();
 
-    String[] mPermissionList = new String[] {
+    String[] mPermissionList = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
 
@@ -97,6 +107,31 @@ public class MainActivity extends AppCompatActivity {
                 sendAuth();
             }
         });
+        findViewById(R.id.get_ranking).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 如果本地未安装抖音或者抖音的版本过低，会直接自动调用 web页面 进行授权
+                new Thread() {
+                    @Override
+                    public void run() {
+                        getRanking(clientTokenRequest(), 1);
+                    }
+                }.start();
+            }
+        });
+        findViewById(R.id.get_ranking_version).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 如果本地未安装抖音或者抖音的版本过低，会直接自动调用 web页面 进行授权
+                new Thread() {
+                    @Override
+                    public void run() {
+                        getRankingVersion(clientTokenRequest(), 0, 15, 1);
+                    }
+                }.start();
+            }
+        });
+
 
         findViewById(R.id.go_to_system_picture).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.is_support_mix_share_button).setOnClickListener((v)->{
-            if(douYinOpenApi.isAppSupportMixShare()) {
-                Toast.makeText(this,"支持混合分享",Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this,"不支持混合分享",Toast.LENGTH_SHORT).show();
+        findViewById(R.id.is_support_mix_share_button).setOnClickListener((v) -> {
+            if (douYinOpenApi.isAppSupportMixShare()) {
+                Toast.makeText(this, "支持混合分享", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "不支持混合分享", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -191,12 +226,12 @@ public class MainActivity extends AppCompatActivity {
         });
         String useFileProviderText = this.getString(R.string.share_user_file_provider);
         Button useFileProviderBt = findViewById(R.id.use_file_provider);
-        useFileProviderBt.setText(useFileProviderText+useFileProvider);
+        useFileProviderBt.setText(useFileProviderText + useFileProvider);
         useFileProviderBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 useFileProvider = !useFileProvider;
-                useFileProviderBt.setText(useFileProviderText+useFileProvider);
+                useFileProviderBt.setText(useFileProviderText + useFileProvider);
             }
         });
 
@@ -208,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void shareToContact() { // image
         ImageObject cImage = new ImageObject();
-        cImage.mImagePaths = useFileProvider?convert2FileProvider():mUri;
+        cImage.mImagePaths = useFileProvider ? convert2FileProvider() : mUri;
         MediaContent mediaContent = new MediaContent();
         mediaContent.mMediaObject = cImage;
         ShareToContact.Request request = new ShareToContact.Request();
@@ -234,13 +269,91 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean sendAuth() {
         Authorization.Request request = new Authorization.Request();
-        request.scope = "trial.whitelist,"+mScope;                          // 用户授权时必选权限
+        request.scope = "trial.whitelist," + mScope;                          // 用户授权时必选权限
         request.optionalScope0 = "mobile";     // 用户授权时可选权限（默认选择）
 //        request.optionalScope0 = mOptionalScope1;    // 用户授权时可选权限（默认不选）
         request.state = "ww";                                   // 用于保持请求和回调的状态，授权请求后原样带回给第三方。
         return douYinOpenApi.authorize(request);               // 优先使用抖音app进行授权，如果抖音app因版本或者其他原因无法授权，则使用wap页授权
 
     }
+
+    private String clientTokenRequest() {
+        try {
+            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+            Request request = new Request.Builder()
+                    .url("https://open.douyin.com/oauth/client_token/?client_key=awobitbo8w4mf83r&" +
+                            "client_secret=9108c9df11a7c5649c28e3ed426a0363&grant_type=client_credential")
+                    .build();//创建Request 对象
+            Response response;
+            response = client.newCall(request).execute();//得到Response 对象
+            if (response.isSuccessful()) {
+                Log.d("siegeLions", "response.code()==" + response.code());
+                Log.d("siegeLions", "response.message()==" + response.message());
+                assert response.body() != null;
+                String accessJson = response.body().string();
+                Log.d("siegeLions", "res==" + accessJson);
+                //此时的代码执行在子线程，修改UI的操作请使用handler跳转到UI线程。
+                JSONObject jsonObject = new JSONObject(accessJson);
+                return jsonObject.getJSONObject("data").getString("access_token");
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void getRanking(String accessToken, int type) {
+        try {
+            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+            Request request = new Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .header("access-token", accessToken)
+                    .url("https://open.douyin.com/discovery/ent/rank/item/?type=" + type + "&version=")
+                    .build();//创建Request 对象
+            Response response;
+            response = client.newCall(request).execute();//得到Response 对象
+            if (response.isSuccessful()) {
+                Log.d("siegeLions", "response.code()==" + response.code());
+                Log.d("siegeLions", "response.message()==" + response.message());
+                assert response.body() != null;
+                String rankingJson = response.body().string();
+                Log.d("siegeLions", "res==" + rankingJson);
+                Looper.prepare();
+                Toast.makeText(this, "获取成功：" + rankingJson,
+                        Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getRankingVersion(String accessToken, long cursor, int count, int type) {
+        try {
+            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+            Request request = new Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .header("access-token", accessToken)
+                    .url("https://open.douyin.com/discovery/ent/rank/version/?cursor="+ cursor +"&count=" + count + "&type=" + type)
+                    .build();//创建Request 对象
+            Response response;
+            response = client.newCall(request).execute();//得到Response 对象
+            if (response.isSuccessful()) {
+                Log.d("siegeLions", "response.code()==" + response.code());
+                Log.d("siegeLions", "response.message()==" + response.message());
+                assert response.body() != null;
+                String rankingJson = response.body().string();
+                Log.d("siegeLions", "res==" + rankingJson);
+                Looper.prepare();
+                Toast.makeText(this, "获取成功：" + rankingJson,
+                        Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -313,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
         switch (shareType) {
             case Share.IMAGE:
                 ImageObject imageObject = new ImageObject();
-                imageObject.mImagePaths = useFileProvider?convert2FileProvider():mUri;
+                imageObject.mImagePaths = useFileProvider ? convert2FileProvider() : mUri;
                 MediaContent mediaContent = new MediaContent();
                 mediaContent.mMediaObject = imageObject;
                 ArrayList<String> hashtags = new ArrayList<>();
@@ -333,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Share.VIDEO:
                 VideoObject videoObject = new VideoObject();
-                videoObject.mVideoPaths = useFileProvider?convert2FileProvider():mUri;
+                videoObject.mVideoPaths = useFileProvider ? convert2FileProvider() : mUri;
                 ArrayList<String> hashtagsVideo = new ArrayList<>();
 
                 if (!TextUtils.isEmpty(mSetDefaultHashTag.getText())) {
@@ -352,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Share.MIX:
                 MixObject mixObject = new MixObject();
-                mixObject.mMediaPaths = useFileProvider?convert2FileProvider():mUri;
+                mixObject.mMediaPaths = useFileProvider ? convert2FileProvider() : mUri;
                 ArrayList<String> hashtagsMix = new ArrayList<>();
 
                 if (!TextUtils.isEmpty(mSetDefaultHashTag.getText())) {
@@ -374,23 +487,23 @@ public class MainActivity extends AppCompatActivity {
         return douYinOpenApi.share(request);
     }
 
-    private ArrayList<String> convert2FileProvider(){
+    private ArrayList<String> convert2FileProvider() {
         ArrayList<String> result = new ArrayList<>();
-        for (String path : mUri){
+        for (String path : mUri) {
             try {
                 String[] uriParts = path.split("\\.");
-                if (uriParts.length >0){
+                if (uriParts.length > 0) {
                     String suffix = uriParts[uriParts.length - 1];
                     File file = new File(this.getExternalFilesDir(null), "/newMedia");
                     file.mkdirs();
-                    File tempFile = File.createTempFile("share_demo", "."+suffix, file);
-                    if (copyFile(new File(path), tempFile)){
+                    File tempFile = File.createTempFile("share_demo", "." + suffix, file);
+                    if (copyFile(new File(path), tempFile)) {
                         Uri uri = FileProvider.getUriForFile(this, this.getPackageName() + ".fileProvider", tempFile);
                         this.grantUriPermission("com.ss.android.ugc.aweme", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         result.add(uri.toString());
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }

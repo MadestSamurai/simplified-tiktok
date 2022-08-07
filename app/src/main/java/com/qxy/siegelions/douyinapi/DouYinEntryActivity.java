@@ -16,17 +16,16 @@ import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
 import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
 import com.qxy.siegelions.MainActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class DouYinEntryActivity extends Activity implements IApiEventHandler {
     DouYinOpenApi douYinOpenApi;
@@ -72,70 +71,66 @@ public class DouYinEntryActivity extends Activity implements IApiEventHandler {
 
 
     private void networkRequest(String authCode) {
-
-        String urlTest = "https://open.douyin.com/oauth/access_token/?client_key=awobitbo8w4mf83r&" +
-                "client_secret=9108c9df11a7c5649c28e3ed426a0363&code=" + authCode + "&grant_type=authorization_code";
         try {
-            URL url = new URL(urlTest);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            StringBuffer buffer = new StringBuffer();
-            String temp = null;
-            while ((temp = bufferedReader.readLine()) != null) {
-                buffer.append(temp);
+            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+            Request request = new Request.Builder()
+                    .url("https://open.douyin.com/oauth/access_token/?client_key=awobitbo8w4mf83r&" +
+                            "client_secret=9108c9df11a7c5649c28e3ed426a0363&code=" + authCode + "&grant_type=authorization_code")
+                    .build();//创建Request 对象
+            Response response;
+            response = client.newCall(request).execute();//得到Response 对象
+            if (response.isSuccessful()) {
+                Log.d("siegeLions", "response.code()==" + response.code());
+                Log.d("siegeLions", "response.message()==" + response.message());
+                assert response.body() != null;
+                String accessJson = response.body().string();
+                Log.d("siegeLions", "res==" + accessJson);
+                //此时的代码执行在子线程，修改UI的操作请使用handler跳转到UI线程。
+                getUserInfo(accessJson);
             }
-            bufferedReader.close();
-            reader.close();
-            inputStream.close();
-            Log.e("MAIN", buffer.toString());
-            parseDiffJson(buffer.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void parseDiffJson(String json) {
+    private void getUserInfo(String json) {
         try {
             JSONObject jsonObject = new JSONObject(json);
-            Log.e("Json", json);
-            String access_token = jsonObject.getJSONObject("data").getString("access_token");
-            String open_id = jsonObject.getJSONObject("data").getString("open_id");
+            String accessToken = jsonObject.getJSONObject("data").getString("access_token");
+            String openId = jsonObject.getJSONObject("data").getString("open_id");
 
-            String urlTest = "https://open.douyin.com/oauth/userinfo/?access_token="+access_token+
-                    "&open_id=" + open_id;
-            URL url = new URL(urlTest);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            StringBuffer buffer = new StringBuffer();
-            String temp = null;
-            while ((temp = bufferedReader.readLine()) != null) {
-                buffer.append(temp);
+            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+            RequestBody formBody = new FormBody.Builder()
+                    .add("access_token", accessToken)
+                    .add("open_id", openId)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url("https://open.douyin.com/oauth/userinfo/")
+                    .header("Content-Type", "application/json")
+                    .header("access-token", accessToken)
+                    .post(formBody)
+                    .build();//创建Request 对象
+
+            Response response;
+            response = client.newCall(request).execute();//得到Response 对象
+            if (response.isSuccessful()) {
+                Log.d("siegeLions", "response.code()==" + response.code());
+                Log.d("siegeLions", "response.message()==" + response.message());
+                assert response.body() != null;
+                String userInfoJson = response.body().string();
+                Log.d("siegeLions", "res==" + userInfoJson);
             }
-            bufferedReader.close();
-            reader.close();
-            inputStream.close();
-            Log.e("MAIN", buffer.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-
     }
+
+
 
     @Override
     public void onErrorIntent(Intent intent) {
         // 错误数据
         Toast.makeText(this, "Intent出错", Toast.LENGTH_LONG).show();
     }
-
-
 }
