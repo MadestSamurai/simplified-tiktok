@@ -35,19 +35,11 @@ import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
 import com.bytedance.sdk.open.douyin.model.ContactHtmlObject;
 import com.bytedance.sdk.open.douyin.model.OpenRecord;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CODE_KEY = "code";
@@ -107,31 +99,14 @@ public class MainActivity extends AppCompatActivity {
                 sendAuth();
             }
         });
+
         findViewById(R.id.get_ranking).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 如果本地未安装抖音或者抖音的版本过低，会直接自动调用 web页面 进行授权
-                new Thread() {
-                    @Override
-                    public void run() {
-                        getRanking(clientTokenRequest(), 1);
-                    }
-                }.start();
+                Intent intent = new Intent(MainActivity.this , RankingActivity.class);
+                startActivity(intent);
             }
         });
-        findViewById(R.id.get_ranking_version).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 如果本地未安装抖音或者抖音的版本过低，会直接自动调用 web页面 进行授权
-                new Thread() {
-                    @Override
-                    public void run() {
-                        getRankingVersion(clientTokenRequest(), 0, 15, 1);
-                    }
-                }.start();
-            }
-        });
-
 
         findViewById(R.id.go_to_system_picture).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,84 +251,6 @@ public class MainActivity extends AppCompatActivity {
         return douYinOpenApi.authorize(request);               // 优先使用抖音app进行授权，如果抖音app因版本或者其他原因无法授权，则使用wap页授权
 
     }
-
-    private String clientTokenRequest() {
-        try {
-            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
-            Request request = new Request.Builder()
-                    .url("https://open.douyin.com/oauth/client_token/?client_key=awobitbo8w4mf83r&" +
-                            "client_secret=9108c9df11a7c5649c28e3ed426a0363&grant_type=client_credential")
-                    .build();//创建Request 对象
-            Response response;
-            response = client.newCall(request).execute();//得到Response 对象
-            if (response.isSuccessful()) {
-                Log.d("siegeLions", "response.code()==" + response.code());
-                Log.d("siegeLions", "response.message()==" + response.message());
-                assert response.body() != null;
-                String accessJson = response.body().string();
-                Log.d("siegeLions", "res==" + accessJson);
-                //此时的代码执行在子线程，修改UI的操作请使用handler跳转到UI线程。
-                JSONObject jsonObject = new JSONObject(accessJson);
-                return jsonObject.getJSONObject("data").getString("access_token");
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void getRanking(String accessToken, int type) {
-        try {
-            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
-            Request request = new Request.Builder()
-                    .header("Content-Type", "application/json")
-                    .header("access-token", accessToken)
-                    .url("https://open.douyin.com/discovery/ent/rank/item/?type=" + type + "&version=")
-                    .build();//创建Request 对象
-            Response response;
-            response = client.newCall(request).execute();//得到Response 对象
-            if (response.isSuccessful()) {
-                Log.d("siegeLions", "response.code()==" + response.code());
-                Log.d("siegeLions", "response.message()==" + response.message());
-                assert response.body() != null;
-                String rankingJson = response.body().string();
-                Log.d("siegeLions", "res==" + rankingJson);
-                Looper.prepare();
-                Toast.makeText(this, "获取成功：" + rankingJson,
-                        Toast.LENGTH_LONG).show();
-                Looper.loop();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void getRankingVersion(String accessToken, long cursor, int count, int type) {
-        try {
-            OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
-            Request request = new Request.Builder()
-                    .header("Content-Type", "application/json")
-                    .header("access-token", accessToken)
-                    .url("https://open.douyin.com/discovery/ent/rank/version/?cursor="+ cursor +"&count=" + count + "&type=" + type)
-                    .build();//创建Request 对象
-            Response response;
-            response = client.newCall(request).execute();//得到Response 对象
-            if (response.isSuccessful()) {
-                Log.d("siegeLions", "response.code()==" + response.code());
-                Log.d("siegeLions", "response.message()==" + response.message());
-                assert response.body() != null;
-                String rankingJson = response.body().string();
-                Log.d("siegeLions", "res==" + rankingJson);
-                Looper.prepare();
-                Toast.makeText(this, "获取成功：" + rankingJson,
-                        Toast.LENGTH_LONG).show();
-                Looper.loop();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

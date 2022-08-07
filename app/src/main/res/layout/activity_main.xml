@@ -32,14 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="获得榜单" />
-
-        <Button
-            android:id="@+id/get_ranking_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="获得榜单版本" />
+            android:text="查看榜单" />
 
         <Button
             android:id="@+id/require_mobile"
