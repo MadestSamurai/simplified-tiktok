@@ -7,7 +7,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     OpenRecord.Request request = new OpenRecord.Request();
 
-    String[] mPermissionList = new String[] {
+    String[] mPermissionList = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
 
@@ -98,6 +100,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.get_ranking).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this , RankingActivity.class);
+                startActivity(intent);
+            }
+        });
+
         findViewById(R.id.go_to_system_picture).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,11 +148,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.is_support_mix_share_button).setOnClickListener((v)->{
-            if(douYinOpenApi.isAppSupportMixShare()) {
-                Toast.makeText(this,"支持混合分享",Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this,"不支持混合分享",Toast.LENGTH_SHORT).show();
+        findViewById(R.id.is_support_mix_share_button).setOnClickListener((v) -> {
+            if (douYinOpenApi.isAppSupportMixShare()) {
+                Toast.makeText(this, "支持混合分享", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "不支持混合分享", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -191,12 +201,12 @@ public class MainActivity extends AppCompatActivity {
         });
         String useFileProviderText = this.getString(R.string.share_user_file_provider);
         Button useFileProviderBt = findViewById(R.id.use_file_provider);
-        useFileProviderBt.setText(useFileProviderText+useFileProvider);
+        useFileProviderBt.setText(useFileProviderText + useFileProvider);
         useFileProviderBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 useFileProvider = !useFileProvider;
-                useFileProviderBt.setText(useFileProviderText+useFileProvider);
+                useFileProviderBt.setText(useFileProviderText + useFileProvider);
             }
         });
 
@@ -208,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void shareToContact() { // image
         ImageObject cImage = new ImageObject();
-        cImage.mImagePaths = useFileProvider?convert2FileProvider():mUri;
+        cImage.mImagePaths = useFileProvider ? convert2FileProvider() : mUri;
         MediaContent mediaContent = new MediaContent();
         mediaContent.mMediaObject = cImage;
         ShareToContact.Request request = new ShareToContact.Request();
@@ -234,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean sendAuth() {
         Authorization.Request request = new Authorization.Request();
-        request.scope = "trial.whitelist,"+mScope;                          // 用户授权时必选权限
+        request.scope = "trial.whitelist," + mScope;                          // 用户授权时必选权限
         request.optionalScope0 = "mobile";     // 用户授权时可选权限（默认选择）
 //        request.optionalScope0 = mOptionalScope1;    // 用户授权时可选权限（默认不选）
         request.state = "ww";                                   // 用于保持请求和回调的状态，授权请求后原样带回给第三方。
@@ -313,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
         switch (shareType) {
             case Share.IMAGE:
                 ImageObject imageObject = new ImageObject();
-                imageObject.mImagePaths = useFileProvider?convert2FileProvider():mUri;
+                imageObject.mImagePaths = useFileProvider ? convert2FileProvider() : mUri;
                 MediaContent mediaContent = new MediaContent();
                 mediaContent.mMediaObject = imageObject;
                 ArrayList<String> hashtags = new ArrayList<>();
@@ -333,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Share.VIDEO:
                 VideoObject videoObject = new VideoObject();
-                videoObject.mVideoPaths = useFileProvider?convert2FileProvider():mUri;
+                videoObject.mVideoPaths = useFileProvider ? convert2FileProvider() : mUri;
                 ArrayList<String> hashtagsVideo = new ArrayList<>();
 
                 if (!TextUtils.isEmpty(mSetDefaultHashTag.getText())) {
@@ -352,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Share.MIX:
                 MixObject mixObject = new MixObject();
-                mixObject.mMediaPaths = useFileProvider?convert2FileProvider():mUri;
+                mixObject.mMediaPaths = useFileProvider ? convert2FileProvider() : mUri;
                 ArrayList<String> hashtagsMix = new ArrayList<>();
 
                 if (!TextUtils.isEmpty(mSetDefaultHashTag.getText())) {
@@ -374,23 +384,23 @@ public class MainActivity extends AppCompatActivity {
         return douYinOpenApi.share(request);
     }
 
-    private ArrayList<String> convert2FileProvider(){
+    private ArrayList<String> convert2FileProvider() {
         ArrayList<String> result = new ArrayList<>();
-        for (String path : mUri){
+        for (String path : mUri) {
             try {
                 String[] uriParts = path.split("\\.");
-                if (uriParts.length >0){
+                if (uriParts.length > 0) {
                     String suffix = uriParts[uriParts.length - 1];
                     File file = new File(this.getExternalFilesDir(null), "/newMedia");
                     file.mkdirs();
-                    File tempFile = File.createTempFile("share_demo", "."+suffix, file);
-                    if (copyFile(new File(path), tempFile)){
+                    File tempFile = File.createTempFile("share_demo", "." + suffix, file);
+                    if (copyFile(new File(path), tempFile)) {
                         Uri uri = FileProvider.getUriForFile(this, this.getPackageName() + ".fileProvider", tempFile);
                         this.grantUriPermission("com.ss.android.ugc.aweme", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         result.add(uri.toString());
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
