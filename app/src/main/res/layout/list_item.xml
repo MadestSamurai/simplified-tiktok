@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="170dp"
+    android:orientation="horizontal"
+    android:background="@color/gray">
+
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_weight="20"
+        android:scaleType="fitXY"
+        android:src="@mipmap/test" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="50"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp">
+
+        <TextView
+            android:id="@+id/info_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="30"
+            android:gravity="center"
+            android:text="@string/rank_test_title"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+        <TextView
+            android:id="@+id/info_director"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:textColor="@color/orange"
+            android:text="@string/rank_test_score">
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:textColor="@color/orange"
+            android:text="@string/rank_test_type">
+        </TextView>
+        <TextView
+            android:id="@+id/info_date"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:textColor="@color/orange"
+            android:text="@string/rank_test_up_time">
+        </TextView>
+        <TextView
+            android:id="@+id/info_hot"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:textColor="@color/orange"
+            android:text="@string/rank_test_hot_level"
+            >
+
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>
