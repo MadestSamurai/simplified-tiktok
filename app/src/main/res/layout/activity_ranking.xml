@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RankingActivity">
+    tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,6 +33,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="获得榜单版本" />
+
+        <Button
+            android:id="@+id/look_ranking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="查看榜单" />
 
     </LinearLayout>
 

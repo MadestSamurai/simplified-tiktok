@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">Simplyfied Tik-Tok</string>
+    <string name="app_name">Ranking</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="authorize_web">通过web页授权</string>
     <string name="open_system_photo">打开系统相册并分享</string>
     <string name="share_to_aweme">启动分享</string>
@@ -20,4 +23,20 @@
     <string name="share_to_aweme_with_shareid_no_callbacK">启动带shareId无回调</string>
     <string name="share_to_aweme_with_shareid_callback">启动带shareId有回调</string>
     <string name="share_user_file_provider">使用FileProvider=</string>
+
+    <string name="title_movie">抖音电影榜</string>
+    <string name="toolbar_bio">Bio</string>
+    <string name="toolbar_details">Details</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_home">电影</string>
+    <string name="title_dashboard">电视剧</string>
+    <string name="title_notifications">综艺</string>
+    <string name="title_update_time">2022.8.18 22:58 更新</string>
+
+    <string name="rank_test_title">独行月球</string>
+    <string name="rank_test_score">导演：张吃鱼</string>
+    <string name="rank_test_type">喜剧/科幻</string>
+    <string name="rank_test_up_time">2022–07–29 上映</string>
+    <string name="rank_test_hot_level">热度：1221.7万</string>
+    <string name="title_activity_main2">MainActivity2</string>
 </resources>
