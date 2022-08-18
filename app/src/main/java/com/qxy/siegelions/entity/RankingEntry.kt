@@ -4,7 +4,6 @@ import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
-import org.jetbrains.annotations.NotNull
 import java.util.*
 
 @Entity(tableName = "ranking_entry")
@@ -55,6 +54,9 @@ data class RankingEntry(
     @ColumnInfo(name = "search_hot")
     @SerializedName("search_hot")
     var searchHot: Long?,
+
+    @ColumnInfo
+    var tags: Array<String>?,
 
     @ColumnInfo(name = "topic_hot")
     @SerializedName("topic_hot")

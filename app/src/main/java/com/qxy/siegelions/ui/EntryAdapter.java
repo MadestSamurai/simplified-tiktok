@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,47 +17,17 @@ import android.widget.TextView;
 import com.qxy.siegelions.R;
 import com.qxy.siegelions.entity.RankingEntry;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class EntryAdapter extends BaseAdapter {
     private RankingEntry[] mRankingEntry;
     private Context mContext;
-
-    Poster poster = new Poster();
-
-    private class Poster{
-        String id;
-        Bitmap bitmap;
-    }
-
-    private class PosterByte{
-        String id;
-        byte[] bitmap;
-    }
-
-
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if (msg.what == 1) {
-                //通过message，拿到字节数组
-                PosterByte posterByte = (PosterByte) msg.obj;
-                byte[] Picture = posterByte.bitmap;
-                //使用BitmapFactory工厂，把字节数组转化为bitmap
-                Bitmap bitmap = BitmapFactory.decodeByteArray(Picture, 0, Picture.length);
-                poster.bitmap = bitmap;
-                poster.id = posterByte.id;
-            }
-        }
-    };
 
     public EntryAdapter(RankingEntry[] mRankingEntry, Context mContext) {
         this.mRankingEntry = mRankingEntry;
@@ -86,83 +57,143 @@ public class EntryAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.info_item_title = (TextView) convertView.findViewById(R.id.info_item_title);
+            viewHolder.info_en_title = (TextView) convertView.findViewById(R.id.info_en_title);
             viewHolder.info_director = (TextView) convertView.findViewById(R.id.info_director);
             viewHolder.poster = (ImageView) convertView.findViewById(R.id.poster);
             viewHolder.info_date = (TextView) convertView.findViewById(R.id.info_date);
             viewHolder.info_hot = (TextView) convertView.findViewById(R.id.info_hot);
+            viewHolder.tags = (TextView) convertView.findViewById(R.id.info_tags);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        StringBuilder directories = new StringBuilder("");
-        int count = 0;
+        StringBuilder directors = new StringBuilder("");
         if (mRankingEntry[position].getDirectors() == null)
-            directories = new StringBuilder("未知");
+            directors = new StringBuilder("未知");
         else
             for (String director : Objects.requireNonNull(mRankingEntry[position].getDirectors())) {
-                count++;
-                if (count == 4) {
-                    directories.append(director).append("等");
+                if (directors.length()+director.length() > 11) {
+                    directors.append(director).append("等");
                     break;
                 }
-                directories.append(director).append(" ");
+                directors.append(director).append(" ");
             }
         viewHolder.info_item_title.setText(mRankingEntry[position].getNameCN());
-        viewHolder.info_director.setText("导演：" + directories);
+        setTextMarquee(viewHolder.info_item_title);
+
+        viewHolder.info_en_title.setText(mRankingEntry[position].getNameEN());
+        setTextMarquee(viewHolder.info_en_title);
+
+        viewHolder.info_director.setText("导演：" + directors);
 
         String date = String.format("%tF", mRankingEntry[position].getReleaseDate());
         viewHolder.info_date.setText((date.equals("null")) ? "上映日期未知" : date + " 上映");
         viewHolder.info_hot.setText("热度：" + String.format("%.1f", mRankingEntry[position].getHot() / 10000.00) + "万");
-        Bitmap[] bitmap = new Bitmap[30];
 
-        try {
-            count = 0;
-            for(RankingEntry rankingEntry : mRankingEntry) {
-                getPoster(mRankingEntry[count].getPoster(), mRankingEntry[count].getId());
-                if (poster != null && rankingEntry.getId().equals(poster.id)) {
-                    bitmap[count] = poster.bitmap;
-                    count++;
+        asyncloadImage(viewHolder.poster, mRankingEntry[position].getPoster());
+
+        StringBuilder tags = new StringBuilder("");
+        if (mRankingEntry[position].getTags() == null)
+            tags.append("未知");
+        else {
+            for (String tag : Objects.requireNonNull(mRankingEntry[position].getTags())) {
+                if (tags.length()+tag.length() > 12) {
+                    tags.append(tag).append("等");
+                    break;
                 }
+                tags.append(tag).append("/");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            viewHolder.tags.setText(tags.substring(0, tags.length() - 1));
         }
-
-        viewHolder.poster.setImageBitmap(bitmap[position]);
-        // TODO 图片获取混乱，待处理，考虑使用本地缓存解决问题。
 
         return convertView;
     }
 
     private class ViewHolder {
         TextView info_item_title;
+        TextView info_en_title;
         TextView info_director;
         ImageView poster;
         TextView info_date;
         TextView info_hot;
+        ImageView rank_image;
+        TextView tags;
     }
 
-    public void getPoster(String path, String id) throws IOException {
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(path)
-                .build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            public void onResponse(Call call, Response response) throws IOException {
-                byte[] Picture_bt = response.body().bytes();
-                //通过handler更新UI
-                PosterByte posterByte = new PosterByte();
-                posterByte.bitmap = Picture_bt;
-                posterByte.id = id;
-                Message message = handler.obtainMessage();
-                message.obj = posterByte;
-                message.what = 1;
-                handler.sendMessage(message);
-            }
-        });
+    public static void setTextMarquee(TextView textView) {
+        if (textView != null) {
+            textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            textView.setSingleLine(true);
+            textView.setSelected(true);
+            textView.setFocusable(true);
+            textView.setFocusableInTouchMode(true);
+        }
     }
+
+    /**
+     * @param url 　本地或网络的url
+     * @return url的bitmap
+     */
+    public Bitmap getLocalOrNetBitmap(String url) {
+        Bitmap bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.drawable.store_item_default);
+        if (url != null) {
+            InputStream in = null;
+            BufferedOutputStream out = null;
+            try {
+                in = new BufferedInputStream(new URL(url).openStream(), 2 * 1024);
+                final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                out = new BufferedOutputStream(dataStream, 2 * 1024);
+                byte[] b = new byte[1024];
+                int read;
+                while ((read = in.read(b)) != -1) {
+                    out.write(b, 0, read);
+                }
+                out.flush();
+                byte[] data = dataStream.toByteArray();
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                data = null;
+                return bitmap;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return bitmap;
+            }
+        }
+        return bitmap;
+    }
+
+    private void asyncloadImage(final ImageView imageView, final String uri) {
+        final Handler mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    Bitmap bitmap = (Bitmap) msg.obj;
+                    if (imageView != null && uri != null) {
+                        imageView.setImageBitmap(bitmap);
+                    }
+
+                }
+            }
+        };
+        // 子线程，开启子线程去下载或者去缓存目录找图片，并且返回图片在缓存目录的地址
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //这个URI是图片下载到本地后的缓存目录中的URI
+                    if (uri != null) {
+                        Bitmap bitmap = getLocalOrNetBitmap(uri);
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = bitmap;
+                        mHandler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+
 }

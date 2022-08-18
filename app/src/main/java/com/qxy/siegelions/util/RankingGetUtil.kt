@@ -23,8 +23,8 @@ import java.util.*
  * @author MadSamurai
  */
 class RankingGetUtil(private val context: Context) {
-    private val CLIENT_KEY = "aw56tlds5khaj17b"
-    private val CLIENT_SECRET = "3c997d618bca0020d9f8d484cb309451"
+    private val CLIENT_KEY = "awk60ixtubmcabqy"
+    private val CLIENT_SECRET = "373a02c23dad01c50a439e7be59512d7"
 
     private fun clientTokenRequest(forceRequest: Boolean): String? {
         var clientToken = getSettingNote(context, "client_info", "client_token")

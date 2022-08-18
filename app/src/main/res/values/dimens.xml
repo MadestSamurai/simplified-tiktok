@@ -5,6 +5,7 @@
     <dimen name="corner_radius_oval">16dp</dimen>
 
     <dimen name="height_toolbar">70dp</dimen>
+    <dimen name="height_banner">200dp</dimen>
     <dimen name="height_profile_image">250dp</dimen>
 
     <!-- sum of *height_toolbar* and *height_profile_image* -->

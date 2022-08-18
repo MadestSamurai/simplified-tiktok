@@ -3,33 +3,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background"
     android:id="@+id/wrapper">
 
 
     <FrameLayout
         android:id="@+id/toolbar_list"
-        android:background="@color/orange"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_toolbar">
+        android:layout_height="@dimen/height_banner">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="25dp"
+            android:src="@drawable/movie_title">
+        </ImageView>
 
         <TextView
-            android:text="@string/title_movie"
-            android:textColor="@color/black"
-            android:layout_gravity="center"
-            android:fontFamily="sans-serif-bold"
-            android:textSize="@dimen/text_size_toolbar_title"
+            android:id="@+id/info_en_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="20dp"
+            android:layout_weight="20"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="bottom|right"
+            android:textColor="@color/white"
+            android:text="@string/title_update_time"/>
+
 
     </FrameLayout>
 
-    <ListView
-        android:id="@+id/list_view"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/img_item_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="1000dp"
         android:layout_below="@+id/toolbar_list"
+        app:cardCornerRadius="15dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@color/gray"
-        android:divider="@drawable/list_divider"
-        tools:listitem="@layout/list_item" />
+        app:cardElevation="0dp">
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:background="@color/gray"
+            android:divider="@drawable/list_divider"
+            tools:listitem="@layout/list_item" />
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

@@ -28,9 +28,10 @@
     <string name="toolbar_bio">Bio</string>
     <string name="toolbar_details">Details</string>
     <string name="title_activity_menu">MenuActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">电影</string>
+    <string name="title_dashboard">电视剧</string>
+    <string name="title_notifications">综艺</string>
+    <string name="title_update_time">2022.8.18 22:58 更新</string>
 
     <string name="rank_test_title">独行月球</string>
     <string name="rank_test_score">导演：张吃鱼</string>
