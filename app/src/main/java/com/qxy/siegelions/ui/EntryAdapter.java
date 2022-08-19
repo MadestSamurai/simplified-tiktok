@@ -67,36 +67,42 @@ public class EntryAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        RankingEntry rankingEntry = mRankingEntry[position];
+
         StringBuilder directors = new StringBuilder("");
-        if (mRankingEntry[position].getDirectors() == null)
+        if (rankingEntry.getDirectors() == null)
             directors = new StringBuilder("未知");
         else
-            for (String director : Objects.requireNonNull(mRankingEntry[position].getDirectors())) {
+            for (String director : Objects.requireNonNull(rankingEntry.getDirectors())) {
                 if (directors.length()+director.length() > 11) {
                     directors.append(director).append("等");
                     break;
                 }
                 directors.append(director).append(" ");
             }
-        viewHolder.info_item_title.setText(mRankingEntry[position].getNameCN());
+        viewHolder.info_item_title.setText(rankingEntry.getNameCN());
         setTextMarquee(viewHolder.info_item_title);
 
-        viewHolder.info_en_title.setText(mRankingEntry[position].getNameEN());
+        viewHolder.info_en_title.setText(rankingEntry.getNameEN());
         setTextMarquee(viewHolder.info_en_title);
 
         viewHolder.info_director.setText("导演：" + directors);
 
-        String date = String.format("%tF", mRankingEntry[position].getReleaseDate());
+        String date = String.format("%tF", rankingEntry.getReleaseDate());
         viewHolder.info_date.setText((date.equals("null")) ? "上映日期未知" : date + " 上映");
-        viewHolder.info_hot.setText("热度：" + String.format("%.1f", mRankingEntry[position].getHot() / 10000.00) + "万");
+        viewHolder.info_hot.setText("热度：" + String.format("%.1f", rankingEntry.getHot() / 10000.00) + "万");
 
-        asyncloadImage(viewHolder.poster, mRankingEntry[position].getPoster());
+        viewHolder.poster.setTag(rankingEntry.getPoster());
+        viewHolder.poster.setImageResource(R.drawable.ic_launcher_foreground);
+
+        asyncloadImage(viewHolder.poster, rankingEntry.getPoster());
+        //TODO Local image cache
 
         StringBuilder tags = new StringBuilder("");
-        if (mRankingEntry[position].getTags() == null)
+        if (rankingEntry.getTags() == null)
             tags.append("未知");
         else {
-            for (String tag : Objects.requireNonNull(mRankingEntry[position].getTags())) {
+            for (String tag : Objects.requireNonNull(rankingEntry.getTags())) {
                 if (tags.length()+tag.length() > 12) {
                     tags.append(tag).append("等");
                     break;
@@ -135,7 +141,7 @@ public class EntryAdapter extends BaseAdapter {
      * @return url的bitmap
      */
     public Bitmap getLocalOrNetBitmap(String url) {
-        Bitmap bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.drawable.store_item_default);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.drawable.ic_launcher_foreground);
         if (url != null) {
             InputStream in = null;
             BufferedOutputStream out = null;
@@ -168,7 +174,7 @@ public class EntryAdapter extends BaseAdapter {
                 super.handleMessage(msg);
                 if (msg.what == 1) {
                     Bitmap bitmap = (Bitmap) msg.obj;
-                    if (imageView != null && uri != null) {
+                    if (imageView.getTag() != null && imageView.getTag().equals(uri)) {
                         imageView.setImageBitmap(bitmap);
                     }
 
