@@ -8,10 +8,11 @@ import okhttp3.OkHttpClient
 import org.json.JSONObject
 import org.json.JSONException
 import com.qxy.siegelions.entity.RankingEntry
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.qxy.siegelions.config.DateDeserializer
+import com.qxy.siegelions.entity.RankingEntryReq
 import com.qxy.siegelions.entity.RankingVersion
+import com.qxy.siegelions.entity.RankingVersionReq
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -23,14 +24,10 @@ import java.util.*
  * @author MadSamurai
  */
 class RankingGetUtil(private val context: Context) {
-    private val CLIENT_KEY = "awk60ixtubmcabqy"
-    private val CLIENT_SECRET = "373a02c23dad01c50a439e7be59512d7"
-
     private fun clientTokenRequest(forceRequest: Boolean): String? {
         var clientToken = getSettingNote(context, "client_info", "client_token")
         val clientTokenTimeString = getSettingNote(context, "client_info", "client_token_time")
-        val clientTokenTime: Long
-        clientTokenTime = clientTokenTimeString?.toLong() ?: 0
+        val clientTokenTime: Long = clientTokenTimeString?.toLong() ?: 0
         Log.d("siegeLions", "client_token$clientToken")
         Log.d(
             "siegeLions",
@@ -47,8 +44,7 @@ class RankingGetUtil(private val context: Context) {
                                 + "&client_secret=" + CLIENT_SECRET + "&grant_type=client_credential"
                     )
                     .build()
-                val response: Response
-                response = client.newCall(request).execute() //得到Response 对象
+                val response: Response = client.newCall(request).execute()
                 if (response.isSuccessful) {
                     Log.d("siegeLions", "response.code()==" + response.code())
                     Log.d("siegeLions", "response.message()==" + response.message())
@@ -77,18 +73,20 @@ class RankingGetUtil(private val context: Context) {
      * @param type    榜单类型
      * @param version 榜单的版本号（可为空，即查询当前榜单）
      */
-    fun getRanking(type: Int, version: String): Array<RankingEntry>? {
+    private fun getRanking(type: Int, version: String): RankingEntryReq? {
         val accessToken = clientTokenRequest(false)
         var rankingJson: String? = null
         try {
             val client = OkHttpClient()
-            var request = Request.Builder()
-                .header("Content-Type", "application/json")
-                .header("access-token", accessToken)
-                .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
-                .build()
+            var request = accessToken?.let {
+                Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .header("access-token", it)
+                    .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
+                    .build()
+            }
             var response: Response
-            response = client.newCall(request).execute() //得到Response 对象
+            response = request?.let { client.newCall(it).execute() }!! //得到Response 对象
             if (response.isSuccessful) {
                 Log.d("siegeLions", "response.code()==" + response.code())
                 Log.d("siegeLions", "response.message()==" + response.message())
@@ -97,12 +95,14 @@ class RankingGetUtil(private val context: Context) {
                 Log.d("siegeLions", "res==$rankingJson")
             } else {
                 clientTokenRequest(true)
-                request = Request.Builder()
-                    .header("Content-Type", "application/json")
-                    .header("access-token", accessToken)
-                    .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
-                    .build()
-                response = client.newCall(request).execute() //得到Response 对象
+                request = accessToken?.let {
+                    Request.Builder()
+                        .header("Content-Type", "application/json")
+                        .header("access-token", it)
+                        .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
+                        .build()
+                }
+                response = request?.let { client.newCall(it).execute() }!! //得到Response 对象
                 if (response.isSuccessful) {
                     Log.d("siegeLions", "response.code()==" + response.code())
                     Log.d("siegeLions", "response.message()==" + response.message())
@@ -115,12 +115,16 @@ class RankingGetUtil(private val context: Context) {
             e.printStackTrace()
         }
         var listJson: String? = null
+        var activeTime = Date()
         try {
             assert(rankingJson != null)
-            val dataJson = JSONObject(rankingJson)
-            listJson = (dataJson["data"] as JSONObject)["list"].toString()
-            Log.d("siegeLions", "list$listJson")
-            val gson = Gson()
+            val dataJson = rankingJson?.let { JSONObject(it) }?.get("data") as JSONObject
+            listJson = dataJson["list"].toString()
+            activeTime = dataJson["active_time"] as Date
+            //TODO get version by activeTime
+
+
+            Log.d("siegeLions", "list: $listJson")
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -134,7 +138,10 @@ class RankingGetUtil(private val context: Context) {
         for (i in rankingEntries.indices) {
             rankingEntries[i].rank = i + 1
         }
-        return rankingEntries
+        return RankingEntryReq(
+            activeTime,
+            rankingEntries
+        )
     }
 
     /**
@@ -142,7 +149,7 @@ class RankingGetUtil(private val context: Context) {
      *
      * @param type 榜单类型
      */
-    fun getRanking(type: Int): Array<RankingEntry>? {
+    fun getRanking(type: Int): RankingEntryReq? {
         return this.getRanking(type, "")
     }
 
@@ -153,18 +160,20 @@ class RankingGetUtil(private val context: Context) {
      * @param count  获取个数，不建议太大
      * @param type   榜单类型
      */
-    fun getRankingVersion(cursor: Long, count: Int, type: Int): Array<RankingVersion> {
+    fun getRankingVersion(cursor: Long, count: Int, type: Int): RankingVersionReq {
         val accessToken = clientTokenRequest(false)
         var rankingJson: String? = null
         try {
             val client = OkHttpClient()
-            var request = Request.Builder()
-                .header("Content-Type", "application/json")
-                .header("access-token", accessToken)
-                .url("https://open.douyin.com/discovery/ent/rank/version/?cursor=$cursor&count=$count&type=$type")
-                .build()
+            var request = accessToken?.let {
+                Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .header("access-token", it)
+                    .url("https://open.douyin.com/discovery/ent/rank/version/?cursor=$cursor&count=$count&type=$type")
+                    .build()
+            }
             var response: Response
-            response = client.newCall(request).execute()
+            response = request?.let { client.newCall(it).execute() }!!
             if (response.isSuccessful) {
                 Log.d("siegeLions", "response.code()==" + response.code())
                 Log.d("siegeLions", "response.message()==" + response.message())
@@ -172,12 +181,14 @@ class RankingGetUtil(private val context: Context) {
                 rankingJson = response.body()!!.string()
                 Log.d("siegeLions", "res==$rankingJson")
             } else {
-                request = Request.Builder()
-                    .header("Content-Type", "application/json")
-                    .header("access-token", accessToken)
-                    .url("https://open.douyin.com/discovery/ent/rank/version/?cursor=$cursor&count=$count&type=$type")
-                    .build()
-                response = client.newCall(request).execute()
+                request = accessToken?.let {
+                    Request.Builder()
+                        .header("Content-Type", "application/json")
+                        .header("access-token", it)
+                        .url("https://open.douyin.com/discovery/ent/rank/version/?cursor=$cursor&count=$count&type=$type")
+                        .build()
+                }
+                response = request?.let { client.newCall(it).execute() }!!
                 if (response.isSuccessful) {
                     Log.d("siegeLions", "response.code()==" + response.code())
                     Log.d("siegeLions", "response.message()==" + response.message())
@@ -190,20 +201,28 @@ class RankingGetUtil(private val context: Context) {
             e.printStackTrace()
         }
         var listJson: String? = null
+        var cursorGet = 0
+        var hasMore: Boolean? = null
         try {
             assert(rankingJson != null)
-            val dataJson = JSONObject(rankingJson)
-            listJson = (dataJson["data"] as JSONObject)["list"].toString()
+            val dataJson = rankingJson?.let { JSONObject(it) }?.get("data") as JSONObject
+            listJson = dataJson["list"].toString()
             Log.d("siegeLions", "list$listJson")
-            val gson = Gson()
+            cursorGet = dataJson["cursor"] as Int
+            hasMore = dataJson["has_more"] as Boolean
         } catch (e: JSONException) {
             e.printStackTrace()
         }
+
         val gsonBuilder = GsonBuilder()
         gsonBuilder.registerTypeAdapter(Date::class.java, DateDeserializer())
         val gson = gsonBuilder
             .setDateFormat("yyyy-MM-dd")
             .create()
-        return gson.fromJson(listJson, Array<RankingVersion>::class.java)
+        return RankingVersionReq(
+            cursorGet,
+            hasMore,
+            gson.fromJson(listJson, Array<RankingVersion>::class.java)
+        )
     }
 }

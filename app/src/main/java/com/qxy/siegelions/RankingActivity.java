@@ -11,7 +11,9 @@ import com.qxy.siegelions.dao.RankingVersionDao;
 import com.qxy.siegelions.database.RankingEntryDatabase;
 import com.qxy.siegelions.database.RankingVersionDatabase;
 import com.qxy.siegelions.entity.RankingEntry;
+import com.qxy.siegelions.entity.RankingEntryReq;
 import com.qxy.siegelions.entity.RankingVersion;
+import com.qxy.siegelions.entity.RankingVersionReq;
 import com.qxy.siegelions.util.RankingGetUtil;
 
 import java.util.Objects;
@@ -32,11 +34,21 @@ public class RankingActivity extends AppCompatActivity {
                 .build();
         RankingEntryDao rankingEntryDao = rankingEntryDatabase.getEntryDao();
 
+        RankingVersionDatabase rankingVersionDatabase = Room.databaseBuilder(this,RankingVersionDatabase.class,"ranking_version_database")
+                .allowMainThreadQueries()
+                .build();
+        RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
+
         findViewById(R.id.get_ranking).setOnClickListener(v -> new Thread() {
             @Override
             public void run() {
-                RankingEntry[] rankingEntries = rankingGetUtil.getRanking(TYPE_MOVIE);
-                for(RankingEntry rankingEntry : rankingEntries){
+                RankingEntryReq rankingEntryReq = rankingGetUtil.getRanking(TYPE_MOVIE);
+                assert rankingEntryReq != null;
+                assert rankingVersionDao != null;
+                long version = Objects.requireNonNull(rankingVersionDao.getVersionByDate(Objects.requireNonNull(rankingEntryReq.getActiveTime()))).getVersion();
+                for(RankingEntry rankingEntry : rankingEntryReq.getRankingEntry()){
+                    assert rankingEntryDao != null;
+                    rankingEntry.setVersionId(version);
                     if(rankingEntryDao.getEntryById(rankingEntry.getId()) != null){
                         rankingEntryDao.updateEntry(rankingEntry);
                     }
@@ -45,18 +57,16 @@ public class RankingActivity extends AppCompatActivity {
             }
         }.start());
 
-        RankingVersionDatabase rankingVersionDatabase = Room.databaseBuilder(this,RankingVersionDatabase.class,"ranking_version_database")
-                .allowMainThreadQueries()
-                .build();
-        RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
-
         findViewById(R.id.get_ranking_version).setOnClickListener(v -> new Thread() {
             @Override
             public void run() {
                 Boolean hasMore = true;
-                while(hasMore) {
-                    RankingVersion[] rankingVersions = rankingGetUtil.getRankingVersion(0, 15, TYPE_MOVIE);
-                    for (RankingVersion rankingVersion : rankingVersions) {
+                int cursor = 0;
+                while(Boolean.TRUE.equals(hasMore)) {
+                    RankingVersionReq rankingVersionReq = rankingGetUtil.getRankingVersion(cursor, 15, TYPE_MOVIE);
+                    cursor = rankingVersionReq.getCursor();
+                    hasMore = rankingVersionReq.getHasMore();
+                    for (RankingVersion rankingVersion : rankingVersionReq.getRankingVersion()) {
                         assert rankingVersionDao != null;
                         if (rankingVersionDao.getVersionByDate(Objects.requireNonNull(rankingVersion.getActiveTime())) != null) {
                             rankingVersionDao.updateVersion(rankingVersion);
