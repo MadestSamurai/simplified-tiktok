@@ -16,6 +16,7 @@ import com.qxy.siegelions.entity.RankingVersionReq
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -120,11 +121,11 @@ class RankingGetUtil(private val context: Context) {
             assert(rankingJson != null)
             val dataJson = rankingJson?.let { JSONObject(it) }?.get("data") as JSONObject
             listJson = dataJson["list"].toString()
-            activeTime = dataJson["active_time"] as Date
-            //TODO get version by activeTime
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            activeTime = simpleDateFormat.parse(dataJson["active_time"].toString()) as Date
 
-
-            Log.d("siegeLions", "list: $listJson")
+            Log.d("get listJson", "list: $listJson")
+            Log.d("get activeTime", "activeTime: $activeTime")
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -181,6 +182,7 @@ class RankingGetUtil(private val context: Context) {
                 rankingJson = response.body()!!.string()
                 Log.d("siegeLions", "res==$rankingJson")
             } else {
+                clientTokenRequest(true)
                 request = accessToken?.let {
                     Request.Builder()
                         .header("Content-Type", "application/json")

@@ -2,6 +2,7 @@ package com.qxy.siegelions;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
@@ -43,9 +44,9 @@ public class RankingActivity extends AppCompatActivity {
             @Override
             public void run() {
                 RankingEntryReq rankingEntryReq = rankingGetUtil.getRanking(TYPE_MOVIE);
-                assert rankingEntryReq != null;
                 assert rankingVersionDao != null;
-                long version = Objects.requireNonNull(rankingVersionDao.getVersionByDate(Objects.requireNonNull(rankingEntryReq.getActiveTime()))).getVersion();
+                long version = rankingVersionDao.getVersionIdByDate(Objects.requireNonNull(rankingEntryReq.getActiveTime()));
+                Log.d("version_id", version+"");
                 for(RankingEntry rankingEntry : rankingEntryReq.getRankingEntry()){
                     assert rankingEntryDao != null;
                     rankingEntry.setVersionId(version);
@@ -63,7 +64,7 @@ public class RankingActivity extends AppCompatActivity {
                 Boolean hasMore = true;
                 int cursor = 0;
                 while(Boolean.TRUE.equals(hasMore)) {
-                    RankingVersionReq rankingVersionReq = rankingGetUtil.getRankingVersion(cursor, 15, TYPE_MOVIE);
+                    RankingVersionReq rankingVersionReq = rankingGetUtil.getRankingVersion(cursor, 20, TYPE_MOVIE);
                     cursor = rankingVersionReq.getCursor();
                     hasMore = rankingVersionReq.getHasMore();
                     for (RankingVersion rankingVersion : rankingVersionReq.getRankingVersion()) {

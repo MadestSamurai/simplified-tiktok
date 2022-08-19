@@ -15,8 +15,11 @@ interface RankingVersionDao {
     @Update
     fun updateVersion(rankingEntry: RankingVersion?)
 
+    @Query("SELECT version FROM ranking_version WHERE active_time < :time ORDER BY active_time DESC limit 1")
+    fun getVersionIdByDate(time: Date): Long
+
     @Query("SELECT * FROM ranking_version WHERE active_time = :time")
-    fun getVersionByDate(time: Date): RankingVersion?
+    fun getVersionByDate(time: Date): RankingVersion
 
     @Query("SELECT * FROM ranking_version WHERE id = :vid")
     fun getVersionById(vid: Long): RankingVersion?
