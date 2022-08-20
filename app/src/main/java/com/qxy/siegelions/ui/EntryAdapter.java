@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.qxy.siegelions.R;
 import com.qxy.siegelions.entity.RankingEntry;
+import com.qxy.siegelions.util.ImageCacheUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -96,7 +97,6 @@ public class EntryAdapter extends BaseAdapter {
         viewHolder.poster.setImageResource(R.drawable.ic_launcher_foreground);
 
         asyncloadImage(viewHolder.poster, rankingEntry.getPoster());
-        //TODO Local image cache
 
         StringBuilder tags = new StringBuilder("");
         if (rankingEntry.getTags() == null)
@@ -187,8 +187,13 @@ public class EntryAdapter extends BaseAdapter {
             public void run() {
                 try {
                     //这个URI是图片下载到本地后的缓存目录中的URI
+                    ImageCacheUtil imageCacheUtil = new ImageCacheUtil(mContext);
                     if (uri != null) {
-                        Bitmap bitmap = getLocalOrNetBitmap(uri);
+                        Bitmap bitmap = imageCacheUtil.getBitmap(uri);
+                        if (bitmap == null) {
+                            bitmap = getLocalOrNetBitmap(uri);
+                            imageCacheUtil.putBitmap(uri, bitmap);
+                        }
                         Message msg = new Message();
                         msg.what = 1;
                         msg.obj = bitmap;
