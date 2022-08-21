@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.get_ranking).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this , RankingActivity.class);
+                Intent intent = new Intent(MainActivity.this , MenuActivity.class);
                 startActivity(intent);
             }
         });

@@ -58,10 +58,17 @@
         <TextView
             android:id="@+id/info_en_title"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="20"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
             android:text="@string/rank_test_score"
             android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
             android:textSize="15sp" />
 
         <TextView
