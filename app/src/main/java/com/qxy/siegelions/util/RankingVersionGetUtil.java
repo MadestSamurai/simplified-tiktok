@@ -34,15 +34,16 @@ public class RankingVersionGetUtil {
             Thread thread = new Thread(() -> {
                 if (NetCheckUtil.isOnline()) {
                     Boolean hasMore = true;
+                    Boolean hasGet = false;
                     int cursor = 0;
-                    while (Boolean.TRUE.equals(hasMore)) {
+                    while (Boolean.TRUE.equals(hasMore) && Boolean.FALSE.equals(hasGet)) {
                         RankingVersionReq rankingVersionReq = rankingNetGet.getRankingVersion(cursor, 20, type);
                         cursor = rankingVersionReq.getCursor();
                         hasMore = rankingVersionReq.getHasMore();
                         for (RankingVersion rankingVersion : rankingVersionReq.getRankingVersion()) {
                             assert rankingVersionDao != null;
                             if (rankingVersionDao.getVersionByDate(Objects.requireNonNull(rankingVersion.getActiveTime())) != null) {
-                                rankingVersionDao.updateVersion(rankingVersion);
+                                hasGet = true;
                             } else rankingVersionDao.insertVersion(rankingVersion);
                         }
                     }

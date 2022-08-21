@@ -1,4 +1,4 @@
 package com.qxy.siegelions.util
 
-const val CLIENT_KEY = "aw9ya7b65zaw0g8n"
-const val CLIENT_SECRET = "6c3be35de6ff25bccecdcf42c9aed3d5"
+const val CLIENT_KEY = "aw3y7e71ayi4b23h"
+const val CLIENT_SECRET = "9a169c079dd4a023e9273b817e805fa7"
