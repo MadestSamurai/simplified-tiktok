@@ -1,7 +1,10 @@
 package com.qxy.siegelions.web
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.qxy.siegelions.util.CommonUtil.getSettingNote
 import com.qxy.siegelions.util.CommonUtil.saveSettingNote
 import okhttp3.OkHttpClient
@@ -19,6 +22,8 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -76,6 +81,7 @@ class RankingNetGet(private val context: Context) {
      * @param type    榜单类型
      * @param version 榜单的版本号（可为空，即查询当前榜单）
      */
+    @SuppressLint("SimpleDateFormat")
     fun getRanking(type: Int, version: Int): RankingEntryReq? {
         val accessToken = clientTokenRequest(false)
         var rankingJson: String? = null

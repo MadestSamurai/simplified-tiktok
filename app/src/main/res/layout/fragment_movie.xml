@@ -11,8 +11,8 @@
         android:id="@+id/version_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:text="142" />
+        android:text="142"
+        android:visibility="invisible" />
 
     <FrameLayout
         android:id="@+id/toolbar_list"
@@ -28,7 +28,7 @@
             android:contentDescription="title" />
 
         <TextView
-            android:id="@+id/info_en_title"
+            android:id="@+id/info_refresh_date"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_gravity="bottom|right"
@@ -50,7 +50,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="50dp"
         android:background="@color/gray"
         app:cardElevation="0dp">
 

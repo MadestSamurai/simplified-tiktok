@@ -1,13 +1,11 @@
 package com.qxy.siegelions.ui.movie
 
 import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
@@ -22,6 +20,7 @@ import com.qxy.siegelions.database.RankingVersionDatabase
 import com.qxy.siegelions.databinding.FragmentMovieBinding
 import com.qxy.siegelions.ui.EntryAdapter
 import com.qxy.siegelions.util.RankingGetUtil
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MovieFragment : Fragment() {
@@ -30,6 +29,7 @@ class MovieFragment : Fragment() {
     private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var showPrev: ImageButton
     private lateinit var showNext: ImageButton
+    private lateinit var refreshTime: TextView
     private var entryAdapter: EntryAdapter? = null
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +54,10 @@ class MovieFragment : Fragment() {
         }
         val rankingEntryDao = rankingEntryDatabase?.entryDao
 
+        val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+        refreshTime = view.findViewById(R.id.info_refresh_date)
+        refreshTime.text = "$fmt 更新"
+
         val rankingVersionDatabase = context?.let {
             Room.databaseBuilder(
                 it,
@@ -72,6 +76,9 @@ class MovieFragment : Fragment() {
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
             val entries = rankingGetUtil.getRankingEntry(1, version)
+            val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+            refreshTime = view.findViewById(R.id.info_refresh_date)
+            refreshTime.text = "$fmt 更新"
             //在获取数据后重新调用适配器设置数据显示
             entryAdapter = EntryAdapter(entries, context)
             listView.adapter = entryAdapter
