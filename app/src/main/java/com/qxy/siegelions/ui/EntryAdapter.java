@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -16,14 +15,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.qxy.siegelions.R;
-import com.qxy.siegelions.RankingActivity;
 import com.qxy.siegelions.entity.RankingEntry;
-import com.qxy.siegelions.entity.RankingEntryReq;
 import com.qxy.siegelions.util.ImageCacheUtil;
-import com.qxy.siegelions.web.RankingNetGet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

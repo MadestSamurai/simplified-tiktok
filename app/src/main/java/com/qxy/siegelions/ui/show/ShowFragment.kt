@@ -1,4 +1,4 @@
-package com.qxy.siegelions.ui.movie
+package com.qxy.siegelions.ui.show
 
 import android.graphics.Color
 import android.os.Bundle
@@ -17,15 +17,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.qxy.siegelions.R
 import com.qxy.siegelions.database.RankingEntryDatabase
 import com.qxy.siegelions.database.RankingVersionDatabase
-import com.qxy.siegelions.databinding.FragmentMovieBinding
+import com.qxy.siegelions.databinding.FragmentShowBinding
 import com.qxy.siegelions.ui.EntryAdapter
 import com.qxy.siegelions.util.RankingGetUtil
 import com.qxy.siegelions.util.RankingVersionGetUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MovieFragment : Fragment() {
-    private var binding: FragmentMovieBinding? = null
+class ShowFragment : Fragment() {
+    private var binding: FragmentShowBinding? = null
     private lateinit var listView: ListView
     private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var showPrev: ImageButton
@@ -37,16 +37,16 @@ class MovieFragment : Fragment() {
         container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         ViewModelProvider(this).get(
-            MovieViewModel::class.java
+            ShowViewModel::class.java
         )
 
-        binding = FragmentMovieBinding.inflate(inflater, container, false)
+        binding = FragmentShowBinding.inflate(inflater, container, false)
         val root: View = binding!!.root
-        val view = inflater.inflate(R.layout.fragment_movie, container, false)
+        val view = inflater.inflate(R.layout.fragment_show, container, false)
         listView = view.findViewById(R.id.list_view)
 
         val rankingVersionGetUtil = RankingVersionGetUtil(context)
-        rankingVersionGetUtil.saveRankingVersion(1)
+        rankingVersionGetUtil.saveRankingVersion(3)
 
         val rankingEntryDatabase = context?.let {
             Room.databaseBuilder(
@@ -79,7 +79,7 @@ class MovieFragment : Fragment() {
             val rankingGetUtil = RankingGetUtil(context)
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(1, version)
+            val entries = rankingGetUtil.getRankingEntry(3, version)
             val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
             refreshTime = view.findViewById(R.id.info_refresh_date)
             refreshTime.text = "$fmt 更新"
@@ -97,8 +97,8 @@ class MovieFragment : Fragment() {
             val rankingGetUtil = RankingGetUtil(context)
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(1, version - 1)
-            versionView.text = (version-1).toString()
+            val entries = rankingGetUtil.getRankingEntry(3, version - 1)
+            versionView.text = (version - 1).toString()
             //在获取数据后重新调用适配器设置数据显示
             entryAdapter = EntryAdapter(entries, context)
             listView.adapter = entryAdapter
@@ -108,8 +108,8 @@ class MovieFragment : Fragment() {
             val rankingGetUtil = RankingGetUtil(context)
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(1, version+1)
-            versionView.text = (version-1).toString()
+            val entries = rankingGetUtil.getRankingEntry(3, version + 1)
+            versionView.text = (version - 1).toString()
             //在获取数据后重新调用适配器设置数据显示
             entryAdapter = EntryAdapter(entries, context)
             listView.adapter = entryAdapter
@@ -124,7 +124,6 @@ class MovieFragment : Fragment() {
 
         return view
     }
-
 
     private fun buttonDateClicked(v: View) {
         Log.d("Date_button_test", "Pressed")

@@ -66,7 +66,6 @@ public class RankingGetUtil {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         } else {
             Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show();
             assert rankingEntryDao != null;
