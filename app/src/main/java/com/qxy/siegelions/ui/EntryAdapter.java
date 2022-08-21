@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.qxy.siegelions.R;
+import com.qxy.siegelions.RankingActivity;
 import com.qxy.siegelions.entity.RankingEntry;
+import com.qxy.siegelions.entity.RankingEntryReq;
 import com.qxy.siegelions.util.ImageCacheUtil;
+import com.qxy.siegelions.web.RankingNetGet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -96,7 +103,8 @@ public class EntryAdapter extends BaseAdapter {
         viewHolder.poster.setTag(rankingEntry.getPoster());
         viewHolder.poster.setImageResource(R.drawable.ic_launcher_foreground);
 
-        asyncloadImage(viewHolder.poster, rankingEntry.getPoster());
+        asyncLoadImage(viewHolder.poster, rankingEntry.getPoster());
+        Log.d("movie: ", rankingEntry.getNameCN()+rankingEntry.getPoster());
 
         StringBuilder tags = new StringBuilder("");
         if (rankingEntry.getTags() == null)
@@ -136,6 +144,8 @@ public class EntryAdapter extends BaseAdapter {
         }
     }
 
+
+
     /**
      * @param url 　本地或网络的url
      * @return url的bitmap
@@ -167,7 +177,7 @@ public class EntryAdapter extends BaseAdapter {
         return bitmap;
     }
 
-    private void asyncloadImage(final ImageView imageView, final String uri) {
+    private void asyncLoadImage(final ImageView imageView, final String uri) {
         final Handler mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -182,26 +192,23 @@ public class EntryAdapter extends BaseAdapter {
             }
         };
         // 子线程，开启子线程去下载或者去缓存目录找图片，并且返回图片在缓存目录的地址
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //这个URI是图片下载到本地后的缓存目录中的URI
-                    ImageCacheUtil imageCacheUtil = new ImageCacheUtil(mContext);
-                    if (uri != null) {
-                        Bitmap bitmap = imageCacheUtil.getBitmap(uri);
-                        if (bitmap == null) {
-                            bitmap = getLocalOrNetBitmap(uri);
-                            imageCacheUtil.putBitmap(uri, bitmap);
-                        }
-                        Message msg = new Message();
-                        msg.what = 1;
-                        msg.obj = bitmap;
-                        mHandler.sendMessage(msg);
+        Runnable runnable = () -> {
+            try {
+                //这个URI是图片下载到本地后的缓存目录中的URI
+                ImageCacheUtil imageCacheUtil = new ImageCacheUtil(mContext);
+                if (uri != null) {
+                    Bitmap bitmap = imageCacheUtil.getBitmap(uri);
+                    if (bitmap == null) {
+                        bitmap = getLocalOrNetBitmap(uri);
+                        imageCacheUtil.putBitmap(uri, bitmap);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    Message msg = new Message();
+                    msg.what = 1;
+                    msg.obj = bitmap;
+                    mHandler.sendMessage(msg);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
         new Thread(runnable).start();

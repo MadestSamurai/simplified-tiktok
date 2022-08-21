@@ -16,6 +16,7 @@ import com.qxy.siegelions.entity.RankingEntryReq;
 import com.qxy.siegelions.entity.RankingVersion;
 import com.qxy.siegelions.entity.RankingVersionReq;
 import com.qxy.siegelions.util.RankingGetUtil;
+import com.qxy.siegelions.web.RankingNetGet;
 
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class RankingActivity extends AppCompatActivity {
     private final int TYPE_TELEPLAY = 2;
     private final int TYPE_VARIETY_SHOW = 3;
 
-    private final RankingGetUtil rankingGetUtil = new RankingGetUtil(RankingActivity.this);
+    private final RankingNetGet rankingNetGet = new RankingNetGet(RankingActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,23 +41,10 @@ public class RankingActivity extends AppCompatActivity {
                 .build();
         RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
 
-        findViewById(R.id.get_ranking).setOnClickListener(v -> new Thread() {
-            @Override
-            public void run() {
-                RankingEntryReq rankingEntryReq = rankingGetUtil.getRanking(TYPE_MOVIE);
-                assert rankingVersionDao != null;
-                long version = rankingVersionDao.getVersionIdByDate(Objects.requireNonNull(rankingEntryReq.getActiveTime()));
-                Log.d("version_id", version+"");
-                for(RankingEntry rankingEntry : rankingEntryReq.getRankingEntry()){
-                    assert rankingEntryDao != null;
-                    rankingEntry.setVersionId(version);
-                    if(rankingEntryDao.getEntryById(rankingEntry.getId()) != null){
-                        rankingEntryDao.updateEntry(rankingEntry);
-                    }
-                    else rankingEntryDao.insertEntry(rankingEntry);
-                }
-            }
-        }.start());
+        findViewById(R.id.get_ranking).setOnClickListener(v -> {
+            RankingGetUtil rankingGetUtil = new RankingGetUtil(RankingActivity.this);
+            rankingGetUtil.getRankingEntry(TYPE_MOVIE);
+        });
 
         findViewById(R.id.get_ranking_version).setOnClickListener(v -> new Thread() {
             @Override
@@ -64,7 +52,7 @@ public class RankingActivity extends AppCompatActivity {
                 Boolean hasMore = true;
                 int cursor = 0;
                 while(Boolean.TRUE.equals(hasMore)) {
-                    RankingVersionReq rankingVersionReq = rankingGetUtil.getRankingVersion(cursor, 20, TYPE_MOVIE);
+                    RankingVersionReq rankingVersionReq = rankingNetGet.getRankingVersion(cursor, 20, TYPE_MOVIE);
                     cursor = rankingVersionReq.getCursor();
                     hasMore = rankingVersionReq.getHasMore();
                     for (RankingVersion rankingVersion : rankingVersionReq.getRankingVersion()) {

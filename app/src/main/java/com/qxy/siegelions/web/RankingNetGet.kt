@@ -1,4 +1,4 @@
-package com.qxy.siegelions.util
+package com.qxy.siegelions.web
 
 import android.content.Context
 import android.util.Log
@@ -13,6 +13,8 @@ import com.qxy.siegelions.config.DateDeserializer
 import com.qxy.siegelions.entity.RankingEntryReq
 import com.qxy.siegelions.entity.RankingVersion
 import com.qxy.siegelions.entity.RankingVersionReq
+import com.qxy.siegelions.util.CLIENT_KEY
+import com.qxy.siegelions.util.CLIENT_SECRET
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -24,7 +26,7 @@ import java.util.*
  *
  * @author MadSamurai
  */
-class RankingGetUtil(private val context: Context) {
+class RankingNetGet(private val context: Context) {
     private fun clientTokenRequest(forceRequest: Boolean): String? {
         var clientToken = getSettingNote(context, "client_info", "client_token")
         val clientTokenTimeString = getSettingNote(context, "client_info", "client_token_time")

@@ -102,7 +102,7 @@ public class ImageCacheUtil implements ImageCache {
                                         hex);
 
                                 if (targetFile.exists()) {
-                                    // TODO 读取文件，并生成Bitmap返回，并且，加入到LruCache
+                                    // 读取文件，并生成Bitmap返回，并且，加入到LruCache
                                     // 并且加入到 SoftReference
                                     try {
                                         FileInputStream fin = new FileInputStream(
@@ -142,8 +142,6 @@ public class ImageCacheUtil implements ImageCache {
     public void putBitmap(String url, Bitmap bitmap) {
         lruCache.put(url, bitmap);
         softCache.put(url, new SoftReference<Bitmap>(bitmap));
-
-        // TODO 把bitmap存储到SD卡文件中
 
         // 所有在此目录中存储的文件，在应用程序卸载的时候，被android系统清空
         // 只有自身程序可以访问，此目录，其他程序无法访问

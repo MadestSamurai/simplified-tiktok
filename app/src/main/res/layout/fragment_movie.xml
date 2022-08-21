@@ -44,6 +44,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginBottom="60dp"
         android:background="@color/gray"
         app:cardElevation="0dp">
 
@@ -83,15 +84,21 @@
                 android:contentDescription="TODO" />
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/list_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/refresh_layout"
             android:layout_marginTop="35dp"
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
 
-            android:background="@color/gray"
-            android:divider="@drawable/list_divider"
-            tools:listitem="@layout/list_item" />
+                android:background="@color/gray"
+                android:divider="@drawable/list_divider"
+                tools:listitem="@layout/list_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

@@ -15,8 +15,8 @@ interface RankingEntryDao {
     fun updateEntry(rankingEntry: RankingEntry?)
 
     @Query("SELECT * FROM ranking_entry WHERE version_id = :vid ORDER BY rank")
-    fun allEntryByVersion(vid: Long): Array<RankingEntry>?
+    fun allEntryByVersion(vid: Int): Array<RankingEntry>?
 
-    @Query("SELECT * FROM ranking_entry WHERE id = :eid")
-    fun getEntryById(eid: String): RankingEntry?
+    @Query("SELECT id FROM ranking_entry WHERE version_id = :version AND rank = :rank")
+    fun getIdByVersionAndRank(version: Int, rank: Int): Long?
 }

@@ -8,12 +8,17 @@ import java.util.*
 
 @Entity(tableName = "ranking_entry")
 data class RankingEntry(
-    @PrimaryKey
-    var id: String,
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("e_id")
+    var id: Long,
+
+    @ColumnInfo(name = "e_id")
+    @SerializedName("id")
+    var eId: String,
 
     @ColumnInfo(name = "version_id")
     @SerializedName("version_id")
-    var versionId: Long?,
+    var versionId: Int,
 
     @ColumnInfo
     var actors: Array<String>?,

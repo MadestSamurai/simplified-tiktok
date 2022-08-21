@@ -3,7 +3,7 @@ package com.qxy.siegelions.thread;
 import android.content.Context;
 
 import com.qxy.siegelions.entity.RankingEntry;
-import com.qxy.siegelions.util.RankingGetUtil;
+import com.qxy.siegelions.web.RankingNetGet;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class EntryThread extends Thread {
     }
 
     public void run(){
-        RankingGetUtil rankingGetUtil = new RankingGetUtil(context);
-        rankingEntries = Objects.requireNonNull(rankingGetUtil.getRanking(1)).getRankingEntry();
+        RankingNetGet rankingNetGet = new RankingNetGet(context);
+        rankingEntries = Objects.requireNonNull(rankingNetGet.getRanking(1)).getRankingEntry();
     }
 }
