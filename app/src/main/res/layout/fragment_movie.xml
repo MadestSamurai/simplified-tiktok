@@ -7,6 +7,12 @@
     android:background="@drawable/background"
     android:id="@+id/wrapper">
 
+    <TextView
+        android:id="@+id/version_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:text="142" />
 
     <FrameLayout
         android:id="@+id/toolbar_list"

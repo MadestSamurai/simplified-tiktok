@@ -76,7 +76,7 @@ class RankingNetGet(private val context: Context) {
      * @param type    榜单类型
      * @param version 榜单的版本号（可为空，即查询当前榜单）
      */
-    private fun getRanking(type: Int, version: String): RankingEntryReq? {
+    fun getRanking(type: Int, version: Int): RankingEntryReq? {
         val accessToken = clientTokenRequest(false)
         var rankingJson: String? = null
         try {
@@ -98,12 +98,22 @@ class RankingNetGet(private val context: Context) {
                 Log.d("siegeLions", "res==$rankingJson")
             } else {
                 clientTokenRequest(true)
-                request = accessToken?.let {
-                    Request.Builder()
-                        .header("Content-Type", "application/json")
-                        .header("access-token", it)
-                        .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
-                        .build()
+                if(version == -1) {
+                    request = accessToken?.let {
+                        Request.Builder()
+                            .header("Content-Type", "application/json")
+                            .header("access-token", it)
+                            .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=")
+                            .build()
+                    }
+                } else {
+                    request = accessToken?.let {
+                        Request.Builder()
+                            .header("Content-Type", "application/json")
+                            .header("access-token", it)
+                            .url("https://open.douyin.com/discovery/ent/rank/item/?type=$type&version=$version")
+                            .build()
+                    }
                 }
                 response = request?.let { client.newCall(it).execute() }!! //得到Response 对象
                 if (response.isSuccessful) {
@@ -153,7 +163,7 @@ class RankingNetGet(private val context: Context) {
      * @param type 榜单类型
      */
     fun getRanking(type: Int): RankingEntryReq? {
-        return this.getRanking(type, "")
+        return this.getRanking(type, -1)
     }
 
     /**

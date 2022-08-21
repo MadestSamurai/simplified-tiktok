@@ -27,7 +27,7 @@ public class RankingGetUtil {
         this.mContext = mContext;
     }
 
-    public RankingEntry[] getRankingEntry(int type) {
+    public RankingEntry[] getRankingEntry(int type, int version) {
         final RankingEntry[][] rankingEntries = {null};
 
         rankingNetGet = new RankingNetGet(mContext);
@@ -36,18 +36,10 @@ public class RankingGetUtil {
                 .build()};
         RankingEntryDao rankingEntryDao = rankingEntryDatabase[0].getEntryDao();
 
-        RankingVersionDatabase rankingVersionDatabase = Room.databaseBuilder(mContext, RankingVersionDatabase.class, "ranking_version_database")
-                .allowMainThreadQueries()
-                .build();
-        RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
-
-        assert rankingVersionDao != null;
-        int version = rankingVersionDao.getVersionIdByDate(new Date());
-
         if (NetCheckUtil.isNetConnection(mContext)) {
             Thread thread = new Thread(() -> {
                 if (NetCheckUtil.isOnline()) {
-                    RankingEntryReq rankingEntryReq = rankingNetGet.getRanking(type);
+                    RankingEntryReq rankingEntryReq = rankingNetGet.getRanking(type, version);
 
                     Log.d("version_id", version + "");
                     assert rankingEntryReq != null;
@@ -56,6 +48,7 @@ public class RankingGetUtil {
                         assert rankingEntryDao != null;
                         rankingEntry.setVersionId(version);
                         Long id = rankingEntryDao.getIdByVersionAndRank(version, rankingEntry.getRank());
+                        Log.d("entry_id", id+"");
                         if (id != null) {
                             rankingEntry.setId(id);
                             rankingEntryDao.updateEntry(rankingEntry);
@@ -80,5 +73,16 @@ public class RankingGetUtil {
             rankingEntries[0] = rankingEntryDao.allEntryByVersion(version);
         }
         return rankingEntries[0];
+    }
+
+    public RankingEntry[] getRankingEntry(int type){
+        RankingVersionDatabase rankingVersionDatabase = Room.databaseBuilder(mContext, RankingVersionDatabase.class, "ranking_version_database")
+                .allowMainThreadQueries()
+                .build();
+        RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
+
+        assert rankingVersionDao != null;
+        int version = rankingVersionDao.getVersionIdByDate(new Date());
+        return this.getRankingEntry(type, version);
     }
 }
