@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +16,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.qxy.siegelions.R;
+import com.qxy.siegelions.RankingActivity;
 import com.qxy.siegelions.entity.RankingEntry;
+import com.qxy.siegelions.entity.RankingEntryReq;
+import com.qxy.siegelions.util.ImageCacheUtil;
+import com.qxy.siegelions.web.RankingNetGet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -67,36 +75,42 @@ public class EntryAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        RankingEntry rankingEntry = mRankingEntry[position];
+
         StringBuilder directors = new StringBuilder("");
-        if (mRankingEntry[position].getDirectors() == null)
+        if (rankingEntry.getDirectors() == null)
             directors = new StringBuilder("未知");
         else
-            for (String director : Objects.requireNonNull(mRankingEntry[position].getDirectors())) {
+            for (String director : Objects.requireNonNull(rankingEntry.getDirectors())) {
                 if (directors.length()+director.length() > 11) {
                     directors.append(director).append("等");
                     break;
                 }
                 directors.append(director).append(" ");
             }
-        viewHolder.info_item_title.setText(mRankingEntry[position].getNameCN());
+        viewHolder.info_item_title.setText(rankingEntry.getNameCN());
         setTextMarquee(viewHolder.info_item_title);
 
-        viewHolder.info_en_title.setText(mRankingEntry[position].getNameEN());
+        viewHolder.info_en_title.setText(rankingEntry.getNameEN());
         setTextMarquee(viewHolder.info_en_title);
 
         viewHolder.info_director.setText("导演：" + directors);
 
-        String date = String.format("%tF", mRankingEntry[position].getReleaseDate());
+        String date = String.format("%tF", rankingEntry.getReleaseDate());
         viewHolder.info_date.setText((date.equals("null")) ? "上映日期未知" : date + " 上映");
-        viewHolder.info_hot.setText("热度：" + String.format("%.1f", mRankingEntry[position].getHot() / 10000.00) + "万");
+        viewHolder.info_hot.setText("热度：" + String.format("%.1f", rankingEntry.getHot() / 10000.00) + "万");
 
-        asyncloadImage(viewHolder.poster, mRankingEntry[position].getPoster());
+        viewHolder.poster.setTag(rankingEntry.getPoster());
+        viewHolder.poster.setImageResource(R.drawable.ic_launcher_foreground);
+
+        asyncLoadImage(viewHolder.poster, rankingEntry.getPoster());
+        Log.d("movie: ", rankingEntry.getNameCN()+rankingEntry.getPoster());
 
         StringBuilder tags = new StringBuilder("");
-        if (mRankingEntry[position].getTags() == null)
+        if (rankingEntry.getTags() == null)
             tags.append("未知");
         else {
-            for (String tag : Objects.requireNonNull(mRankingEntry[position].getTags())) {
+            for (String tag : Objects.requireNonNull(rankingEntry.getTags())) {
                 if (tags.length()+tag.length() > 12) {
                     tags.append(tag).append("等");
                     break;
@@ -130,12 +144,14 @@ public class EntryAdapter extends BaseAdapter {
         }
     }
 
+
+
     /**
      * @param url 　本地或网络的url
      * @return url的bitmap
      */
     public Bitmap getLocalOrNetBitmap(String url) {
-        Bitmap bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.drawable.store_item_default);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.drawable.ic_launcher_foreground);
         if (url != null) {
             InputStream in = null;
             BufferedOutputStream out = null;
@@ -161,14 +177,14 @@ public class EntryAdapter extends BaseAdapter {
         return bitmap;
     }
 
-    private void asyncloadImage(final ImageView imageView, final String uri) {
+    private void asyncLoadImage(final ImageView imageView, final String uri) {
         final Handler mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 1) {
                     Bitmap bitmap = (Bitmap) msg.obj;
-                    if (imageView != null && uri != null) {
+                    if (imageView.getTag() != null && imageView.getTag().equals(uri)) {
                         imageView.setImageBitmap(bitmap);
                     }
 
@@ -176,21 +192,23 @@ public class EntryAdapter extends BaseAdapter {
             }
         };
         // 子线程，开启子线程去下载或者去缓存目录找图片，并且返回图片在缓存目录的地址
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //这个URI是图片下载到本地后的缓存目录中的URI
-                    if (uri != null) {
-                        Bitmap bitmap = getLocalOrNetBitmap(uri);
-                        Message msg = new Message();
-                        msg.what = 1;
-                        msg.obj = bitmap;
-                        mHandler.sendMessage(msg);
+        Runnable runnable = () -> {
+            try {
+                //这个URI是图片下载到本地后的缓存目录中的URI
+                ImageCacheUtil imageCacheUtil = new ImageCacheUtil(mContext);
+                if (uri != null) {
+                    Bitmap bitmap = imageCacheUtil.getBitmap(uri);
+                    if (bitmap == null) {
+                        bitmap = getLocalOrNetBitmap(uri);
+                        imageCacheUtil.putBitmap(uri, bitmap);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    Message msg = new Message();
+                    msg.what = 1;
+                    msg.obj = bitmap;
+                    mHandler.sendMessage(msg);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
         new Thread(runnable).start();
