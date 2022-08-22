@@ -36,11 +36,6 @@ class RankingNetGet(private val context: Context) {
         var clientToken = getSettingNote(context, "client_info", "client_token")
         val clientTokenTimeString = getSettingNote(context, "client_info", "client_token_time")
         val clientTokenTime: Long = clientTokenTimeString?.toLong() ?: 0
-        Log.d("siegeLions", "client_token$clientToken")
-        Log.d(
-            "siegeLions",
-            "client_token_time" + clientTokenTime + " " + System.currentTimeMillis()
-        )
         if (forceRequest
             || System.currentTimeMillis() - clientTokenTime > 7200000L || clientToken == null || clientToken == ""
         ) {
