@@ -1,63 +1,53 @@
-package com.qxy.siegelions.util;
+package com.qxy.siegelions.util
 
-import android.content.Context;
-import android.widget.Toast;
-
-import androidx.room.Room;
-
-import com.qxy.siegelions.dao.RankingVersionDao;
-import com.qxy.siegelions.database.RankingVersionDatabase;
-import com.qxy.siegelions.entity.RankingVersion;
-import com.qxy.siegelions.entity.RankingVersionReq;
-import com.qxy.siegelions.web.RankingNetGet;
-
-import java.util.Objects;
+import android.content.Context
+import com.qxy.siegelions.web.RankingNetGet
+import com.qxy.siegelions.database.RankingVersionDatabase
+import androidx.room.Room
+import android.widget.Toast
+import java.util.*
 
 /**
  * 排名版本综合获取工具类
  * @author MadSamurai
  */
-public class RankingVersionGetUtil {
-    private final Context mContext;
-
-    private RankingNetGet rankingNetGet;
-
-    public RankingVersionGetUtil(Context mContext) {
-        this.mContext = mContext;
-    }
-
-    public void saveRankingVersion(int type) {
-
-        rankingNetGet = new RankingNetGet(mContext);
-        RankingVersionDatabase[] rankingVersionDatabase = {Room.databaseBuilder(mContext, RankingVersionDatabase.class, "ranking_Version_database")
+class RankingVersionGetUtil(private val mContext: Context) {
+    private var rankingNetGet: RankingNetGet? = null
+    fun saveRankingVersion(type: Int) {
+        rankingNetGet = RankingNetGet(mContext)
+        val rankingVersionDatabase = arrayOf(
+            Room.databaseBuilder(
+                mContext, RankingVersionDatabase::class.java, "ranking_Version_database"
+            )
                 .allowMainThreadQueries()
-                .build()};
-        RankingVersionDao rankingVersionDao = rankingVersionDatabase[0].getVersionDao();
-
+                .build()
+        )
+        val rankingVersionDao = rankingVersionDatabase[0].versionDao
         if (NetCheckUtil.isNetConnection(mContext)) {
-            Thread thread = new Thread(() -> {
+            val thread = Thread {
                 if (NetCheckUtil.isOnline()) {
-                    Boolean hasMore = true;
-                    Boolean hasGet = false;
-                    int cursor = 0;
-                    while (Boolean.TRUE.equals(hasMore) && Boolean.FALSE.equals(hasGet)) {
-                        RankingVersionReq rankingVersionReq = rankingNetGet.getRankingVersion(cursor, 20, type);
-                        cursor = rankingVersionReq.getCursor();
-                        hasMore = rankingVersionReq.getHasMore();
-                        for (RankingVersion rankingVersion : rankingVersionReq.getRankingVersion()) {
-                            assert rankingVersionDao != null;
-                            if (rankingVersionDao.getVersionByDate(Objects.requireNonNull(rankingVersion.getActiveTime())) != null) {
-                                hasGet = true;
-                            } else rankingVersionDao.insertVersion(rankingVersion);
+                    var hasMore = true
+                    var hasGet = false
+                    var cursor = 0
+                    while (hasMore && !hasGet) {
+                        val rankingVersionReq =
+                            rankingNetGet!!.getRankingVersion(cursor.toLong(), 20, type)
+                        cursor = rankingVersionReq.cursor
+                        hasMore = rankingVersionReq.hasMore == true
+                        for (rankingVersion in rankingVersionReq.rankingVersion) {
+                            assert(rankingVersionDao != null)
+                            if (Objects.requireNonNull(rankingVersion.activeTime)?.let { rankingVersionDao!!.getVersionByDate(it) } != null) {
+                                hasGet = true
+                            } else rankingVersionDao?.insertVersion(rankingVersion)
                         }
                     }
                 } else {
-                    Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show()
                 }
-            });
-            thread.start();
+            }
+            thread.start()
         } else {
-            Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show()
         }
     }
 }
