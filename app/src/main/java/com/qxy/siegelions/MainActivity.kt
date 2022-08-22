@@ -74,6 +74,12 @@ class MainActivity : BaseActivity() {
             val intent = Intent(applicationContext, MenuActivity::class.java)
             startActivity(intent)
         })
+
+        val getUserInfo = findViewById<View>(R.id.get_userinfo)
+        getUserInfo.setOnClickListener(View.OnClickListener {
+            val intent = Intent(applicationContext, TiktokActivity::class.java)
+            startActivity(intent)
+        })
     }
 
     override fun onBackPressed() {
