@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-/**
- * @author:zhanglei 2021/12/15
- */
 public class StayInDyReceiver extends BroadcastReceiver {
 
     private static final String TAG = "StayInDyReceiver";

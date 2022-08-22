@@ -13,9 +13,8 @@ import kotlinx.android.synthetic.main.dialog_comment.*
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-24
- * description 评论弹框
+ * 评论弹框
+ * @author MadSamurai
  */
 class CommentDialog : BaseBottomSheetDialog() {
 

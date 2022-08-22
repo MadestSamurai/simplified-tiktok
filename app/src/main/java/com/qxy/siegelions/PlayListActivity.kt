@@ -4,9 +4,8 @@ import com.qxy.siegelions.base.BaseActivity
 import com.qxy.siegelions.ui.RecommendFragment
 
 /**
- * create by libo
- * create on 2020-05-24
- * description 视频全屏播放页
+ * 视频全屏播放页
+ * @author MadSamurai
  */
 class PlayListActivity : BaseActivity() {
 

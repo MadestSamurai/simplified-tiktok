@@ -1,9 +1,8 @@
 package com.qxy.siegelions.view.viewpagerlayoutmanager
 
 /**
- * create by libo
- * create on 2018/11/22
- * description
+ * 当前视图页面监听
+ * @author MadSamurai
  */
 interface OnViewPagerListener {
     /**

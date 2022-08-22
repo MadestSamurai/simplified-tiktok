@@ -15,6 +15,10 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.qxy.siegelions.databinding.ActivityMenuBinding;
 
+/**
+ * 排行榜菜单页
+ * @author MadSamurai
+ */
 public class MenuActivity extends AppCompatActivity {
 
     private ActivityMenuBinding binding;

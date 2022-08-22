@@ -14,6 +14,7 @@ import com.bytedance.sdk.open.aweme.common.model.BaseResp;
 import com.bytedance.sdk.open.aweme.share.Share;
 import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
 import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
+import com.qxy.siegelions.R;
 import com.qxy.siegelions.TiktokActivity;
 
 import org.json.JSONException;
@@ -27,12 +28,17 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 public class DouYinEntryActivity extends Activity implements IApiEventHandler {
     DouYinOpenApi douYinOpenApi;
+
+    static String CLIENT_KEY = "aw3y7e71ayi4b23h";
+    static String CLIENT_SECRET = "9a169c079dd4a023e9273b817e805fa7";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.personal_home);
         douYinOpenApi = DouYinOpenApiFactory.create(this);
         douYinOpenApi.handleIntent(getIntent(), this);
     }
@@ -54,8 +60,7 @@ public class DouYinEntryActivity extends Activity implements IApiEventHandler {
             Intent intent = null;
             if (resp.isSuccess()) {
 
-                Toast.makeText(this, "授权成功，获得权限：" + response.grantedPermissions + response.authCode,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "授权成功", Toast.LENGTH_LONG).show();
 
                 new Thread() {
                     @Override
@@ -66,7 +71,6 @@ public class DouYinEntryActivity extends Activity implements IApiEventHandler {
 
             }
         }
-
     }
 
 
@@ -74,8 +78,8 @@ public class DouYinEntryActivity extends Activity implements IApiEventHandler {
         try {
             OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
             Request request = new Request.Builder()
-                    .url("https://open.douyin.com/oauth/access_token/?client_key=awobitbo8w4mf83r&" +
-                            "client_secret=9108c9df11a7c5649c28e3ed426a0363&code=" + authCode + "&grant_type=authorization_code")
+                    .url("https://open.douyin.com/oauth/access_token/?client_key=" + CLIENT_KEY +
+                            "&client_secret="+ CLIENT_SECRET +"&code=" + authCode + "&grant_type=authorization_code")
                     .build();//创建Request 对象
             Response response;
             response = client.newCall(request).execute();//得到Response 对象
@@ -125,8 +129,6 @@ public class DouYinEntryActivity extends Activity implements IApiEventHandler {
             e.printStackTrace();
         }
     }
-
-
 
     @Override
     public void onErrorIntent(Intent intent) {

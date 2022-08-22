@@ -16,8 +16,6 @@ import com.qxy.siegelions.view.CircleImageView;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
  * 粉丝适配类
  * @author MadSamurai

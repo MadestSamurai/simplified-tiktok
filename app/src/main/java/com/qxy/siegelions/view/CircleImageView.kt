@@ -10,6 +10,10 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.qxy.siegelions.R
 
+/**
+ * 圆形图片视图
+ * @author MadSamurai
+ */
 class CircleImageView : AppCompatImageView {
     // paint when user press
     private var pressPaint: Paint? = null

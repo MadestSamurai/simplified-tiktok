@@ -1,7 +1,11 @@
 package com.qxy.siegelions.ui
 
+import android.content.Intent
+import android.view.View
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.qxy.siegelions.MenuActivity
 import com.qxy.siegelions.R
 import com.qxy.siegelions.base.BaseFragment
 import com.qxy.siegelions.base.CommPagerAdapter
@@ -35,9 +39,9 @@ class MainFragment : BaseFragment() {
         recommendFragment = RecommendFragment()
         fragments.add(currentLocationFragment!!)
         fragments.add(recommendFragment!!)
-        tabTitle!!.addTab(tabTitle!!.newTab().setText("海淀"))
+        tabTitle!!.addTab(tabTitle!!.newTab().setText("南京"))
         tabTitle!!.addTab(tabTitle!!.newTab().setText("推荐"))
-        pagerAdapter = CommPagerAdapter(childFragmentManager, fragments, arrayOf("海淀", "推荐"))
+        pagerAdapter = CommPagerAdapter(childFragmentManager, fragments, arrayOf("南京", "推荐"))
         viewPager!!.adapter = pagerAdapter
         tabTitle!!.setupWithViewPager(viewPager)
         tabTitle!!.getTabAt(1)!!.select()
@@ -62,7 +66,7 @@ class MainFragment : BaseFragment() {
         tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("首页"))
         tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("好友"))
         tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText(""))
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("消息"))
+        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("排行榜"))
         tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("我"))
     }
 

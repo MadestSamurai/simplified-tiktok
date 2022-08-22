@@ -4,6 +4,10 @@ import android.view.View
 import com.qxy.siegelions.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_show_image.*
 
+/**
+ * 图像展示页
+ * @author MadSamurai
+ */
 class ShowImageActivity : BaseActivity() {
 
     override fun setLayoutId(): Int {

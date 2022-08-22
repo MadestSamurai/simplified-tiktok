@@ -6,9 +6,8 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 
 /**
- * create by libo
- * create on 2018/11/20
- * description 用于加载iconfont的TextView
+ * 用于加载iconfont的TextView
+ * @author MadSamurai
  */
 class IconFontTextView : AppCompatTextView {
     constructor(context: Context?) : super(context!!) {}

@@ -17,9 +17,8 @@ import com.qxy.siegelions.util.OnVideoControllerListener
 import kotlinx.android.synthetic.main.view_controller.view.*
 
 /**
- * create by libo
- * create on 2020-05-20
- * description
+ * 控制视图
+ * @author MadSamurai
  */
 class ControllerView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs), View.OnClickListener {
     private var listener: OnVideoControllerListener? = null
