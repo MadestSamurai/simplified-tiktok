@@ -6,6 +6,10 @@ import androidx.room.Query
 import com.qxy.siegelions.entity.RankingEntry
 import androidx.room.Update
 
+/**
+ * Room Dao
+ * @author yangqiangli
+ */
 @Dao
 interface RankingEntryDao {
     @Insert

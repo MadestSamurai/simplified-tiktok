@@ -19,9 +19,8 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * create by libo
- * create on 2020-05-24
- * description
+ * 粉丝适配类
+ * @author MadSamurai
  */
 public class FansAdapter extends BaseRvAdapter<Video.User, FansAdapter.FansViewHolder> {
 

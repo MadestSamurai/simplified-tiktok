@@ -24,6 +24,10 @@ import com.qxy.siegelions.util.RankingVersionGetUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * 电视剧数据页碎片类
+ * @author akkcdb110
+ */
 class TeleplayFragment : Fragment() {
     private var binding: FragmentTeleplayBinding? = null
     private lateinit var listView: ListView

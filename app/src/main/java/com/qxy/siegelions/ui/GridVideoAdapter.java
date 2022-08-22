@@ -23,9 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * create by libo
- * create on 2020-05-20
- * description
+ * 视频格适配类
+ * @author MadSamurai
  */
 public class GridVideoAdapter extends BaseRvAdapter<Video, GridVideoAdapter.GridVideoViewHolder> {
 

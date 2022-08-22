@@ -11,9 +11,8 @@ import com.qxy.siegelions.R
 import com.google.android.material.appbar.AppBarLayout
 
 /**
- * create by libo
- * create on 2020-05-22
- * description
+ * 应用栏放大表现类
+ * @author MadSamurai
  */
 class AppbarZoomBehavior(context: Context?, attrs: AttributeSet?) : AppBarLayout.Behavior(context, attrs) {
     private var mImageView: ImageView? = null

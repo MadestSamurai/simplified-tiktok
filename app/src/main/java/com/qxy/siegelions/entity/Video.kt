@@ -1,9 +1,8 @@
 package com.qxy.siegelions.entity
 
 /**
- * create by libo
- * create on 2020-06-03
- * description 视频实体类
+ * 视频实体类
+ * @author MadSamurai
  */
 class Video {
     var videoId = 0

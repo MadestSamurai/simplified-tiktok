@@ -6,6 +6,10 @@ import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+/**
+ * 排名版本行实体类
+ * @author MadSamurai
+ */
 @Entity(tableName = "ranking_version")
 data class RankingVersion(
     @PrimaryKey(autoGenerate = true)

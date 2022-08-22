@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * create by libo
- * create on 2018/11/15
- * description RecyclerAdapter基类
- * tip多套布局T传Object类型，其他直接传具体类型
+ * RecyclerAdapter基类
+ * @author MadSamurai
+ * @tip 多套布局T传Object类型，其他直接传具体类型
  */
 abstract class BaseRvAdapter<T, VH : BaseRvViewHolder?>(val context: Context, protected var mDatas: MutableList<T>) : RecyclerView.Adapter<VH>() {
 

@@ -27,6 +27,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
 
+/**
+ * 影视综条目适配类
+ * @author akkcdb110
+ */
 public class EntryAdapter extends BaseAdapter {
     private RankingEntry[] mRankingEntry;
     private Context mContext;

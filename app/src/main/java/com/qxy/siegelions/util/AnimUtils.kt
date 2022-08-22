@@ -3,9 +3,8 @@ package com.qxy.siegelions.util
 import android.view.animation.*
 
 /**
- * create by libo
- * create on 2020-05-20
- * description
+ * 动画工具类
+ * @author MadSamurai
  */
 object AnimUtils {
     /**
