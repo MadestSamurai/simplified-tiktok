@@ -1,0 +1,136 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "19feecd597fece22c90cd3ee522da2c4",
+    "entities": [
+      {
+        "tableName": "ranking_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `e_id` TEXT NOT NULL, `version_id` INTEGER NOT NULL, `actors` TEXT, `directors` TEXT, `discussion_hot` INTEGER, `hot` INTEGER, `influence_hot` INTEGER, `maoyan_id` TEXT, `name_cn` TEXT, `name_en` TEXT, `poster` TEXT, `release_date` INTEGER, `search_hot` INTEGER, `tags` TEXT, `topic_hot` INTEGER, `type` INTEGER NOT NULL, `rank` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eId",
+            "columnName": "e_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versionId",
+            "columnName": "version_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actors",
+            "columnName": "actors",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "directors",
+            "columnName": "directors",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "discussionHot",
+            "columnName": "discussion_hot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hot",
+            "columnName": "hot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "influenceHot",
+            "columnName": "influence_hot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maoyanId",
+            "columnName": "maoyan_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nameCN",
+            "columnName": "name_cn",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nameEN",
+            "columnName": "name_en",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poster",
+            "columnName": "poster",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "releaseDate",
+            "columnName": "release_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "searchHot",
+            "columnName": "search_hot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tags",
+            "columnName": "tags",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "topicHot",
+            "columnName": "topic_hot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rank",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '19feecd597fece22c90cd3ee522da2c4')"
+    ]
+  }
+}
