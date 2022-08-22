@@ -1,5 +1,7 @@
 package com.qxy.siegelions
 
+import android.content.Intent
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
@@ -15,9 +17,8 @@ import rx.functions.Action1
 import java.util.*
 
 /**
- * create by libo
- * create on 2020/5/19
- * description 主页面
+ * 主页面
+ * @author MadSamurai
  */
 class MainActivity : BaseActivity() {
     private var pagerAdapter: CommPagerAdapter? = null
@@ -66,6 +67,12 @@ class MainActivity : BaseActivity() {
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
+        })
+
+        val getRanking = findViewById<View>(R.id.get_ranking)
+        getRanking.setOnClickListener(View.OnClickListener {
+            val intent = Intent(applicationContext, MenuActivity::class.java)
+            startActivity(intent)
         })
     }
 

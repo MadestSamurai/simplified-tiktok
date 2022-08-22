@@ -16,9 +16,8 @@ import com.qxy.siegelions.util.AnimUtils
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-20
- * description 点赞动画view
+ * 点赞动画view
+ * @author MadSamurai
  */
 class LikeView : RelativeLayout {
     private var gestureDetector: GestureDetector? = null

@@ -14,9 +14,8 @@ import kotlinx.android.synthetic.main.dialog_share.*
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-25
- * description 分享弹框
+ * 分享弹框
+ * @author MadSamurai
  */
 class ShareDialog : BaseBottomSheetDialog() {
 

@@ -5,10 +5,9 @@ import android.app.Application;
 import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
 import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
 
-
 /**
- * 主要功能：自定义{@link Application}
- * since: 2018/12/25
+ * 自定义{@link Application}
+ * @author MadSamurai
  */
 public class CustomApplication extends Application {
 

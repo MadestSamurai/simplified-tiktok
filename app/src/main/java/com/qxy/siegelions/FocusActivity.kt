@@ -8,9 +8,8 @@ import kotlinx.android.synthetic.main.activity_focus.*
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-14
- * description 粉丝关注人页面
+ * 粉丝关注人页面
+ * @author MadSamurai
  */
 class FocusActivity : BaseActivity() {
 

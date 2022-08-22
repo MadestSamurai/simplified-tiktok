@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListene
 import androidx.recyclerview.widget.RecyclerView.Recycler
 
 /**
- * create on 2018/11/23
- * description  ViewPager页面切换类型LayoutManager，监听了item的进入和退出并回调
+ * ViewPager页面切换类型LayoutManager，监听了item的进入和退出并回调
+ * @author MadSamurai
  */
 class ViewPagerLayoutManager : LinearLayoutManager {
     private var mPagerSnapHelper: PagerSnapHelper? = null

@@ -4,9 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 
 /**
- * create by libo
- * create on 2020-05-21
- * description 跑马灯textview
+ * 跑马灯textview
+ * @author MadSamurai
  */
 class MarqueeTextView : androidx.appcompat.widget.AppCompatTextView {
     constructor(context: Context?) : super(context!!) {}
