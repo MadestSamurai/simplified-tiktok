@@ -3,9 +3,8 @@ package com.qxy.siegelions.util
 import java.text.DecimalFormat
 
 /**
- * create by libo
- * create on 2020-06-04
- * description
+ * 数值转换工具类
+ * @author MadSamurai
  */
 object NumUtils {
 
