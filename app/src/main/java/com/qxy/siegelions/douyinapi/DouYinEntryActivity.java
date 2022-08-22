@@ -32,8 +32,8 @@ import okhttp3.Response;
 public class DouYinEntryActivity extends Activity implements IApiEventHandler {
     DouYinOpenApi douYinOpenApi;
 
-    static String CLIENT_KEY = "aw3y7e71ayi4b23h";
-    static String CLIENT_SECRET = "9a169c079dd4a023e9273b817e805fa7";
+    static String CLIENT_KEY = "awglr552ejo1dspq";
+    static String CLIENT_SECRET = "68db8db7a2689167ceaff01f96a0d087";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

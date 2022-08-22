@@ -30,6 +30,7 @@ import java.util.*
  */
 class TeleplayFragment : Fragment() {
     private var binding: FragmentTeleplayBinding? = null
+
     private lateinit var listView: ListView
     private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var showPrev: ImageButton
@@ -80,10 +81,10 @@ class TeleplayFragment : Fragment() {
         refreshLayout.setProgressBackgroundColorSchemeColor(Color.LTGRAY) //刷新控件的背景
 
         refreshLayout.setOnRefreshListener(OnRefreshListener {
-            val rankingGetUtil = RankingGetUtil(context)
+            val rankingGetUtil = context?.let { RankingGetUtil(it) }
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(2, version)
+            val entries = rankingGetUtil?.getRankingEntry(2, version)
             val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
             refreshTime = view.findViewById(R.id.info_refresh_date)
             refreshTime.text = "$fmt 更新"
@@ -98,10 +99,10 @@ class TeleplayFragment : Fragment() {
         showNext = view.findViewById(R.id.show_next)
 
         showPrev.setOnClickListener(View.OnClickListener {
-            val rankingGetUtil = RankingGetUtil(context)
+            val rankingGetUtil = context?.let { it1 -> RankingGetUtil(it1) }
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(2, version - 1)
+            val entries = rankingGetUtil?.getRankingEntry(2, version - 1)
             versionView.text = (version - 1).toString()
             //在获取数据后重新调用适配器设置数据显示
             entryAdapter = EntryAdapter(entries, context)
@@ -109,18 +110,18 @@ class TeleplayFragment : Fragment() {
         })
 
         showNext.setOnClickListener(View.OnClickListener {
-            val rankingGetUtil = RankingGetUtil(context)
+            val rankingGetUtil = context?.let { it1 -> RankingGetUtil(it1) }
             val versionView = view.findViewById(R.id.version_id) as TextView
             val version = versionView.text.toString().toInt()
-            val entries = rankingGetUtil.getRankingEntry(2, version + 1)
+            val entries = rankingGetUtil?.getRankingEntry(2, version + 1)
             versionView.text = (version - 1).toString()
             //在获取数据后重新调用适配器设置数据显示
             entryAdapter = EntryAdapter(entries, context)
             listView.adapter = entryAdapter
         })
 
-        val rankingGetUtil = RankingGetUtil(context)
-        val entries = rankingGetUtil.getRankingEntry(2)
+        val rankingGetUtil = context?.let { RankingGetUtil(it) }
+        val entries = rankingGetUtil?.getRankingEntry(2)
 
         entryAdapter = EntryAdapter(entries, context)
         listView.adapter = entryAdapter

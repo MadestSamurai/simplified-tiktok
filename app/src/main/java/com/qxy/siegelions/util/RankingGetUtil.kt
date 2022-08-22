@@ -1,91 +1,77 @@
-package com.qxy.siegelions.util;
+package com.qxy.siegelions.util
 
-import android.content.Context;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.room.Room;
-
-import com.qxy.siegelions.dao.RankingEntryDao;
-import com.qxy.siegelions.dao.RankingVersionDao;
-import com.qxy.siegelions.database.RankingEntryDatabase;
-import com.qxy.siegelions.database.RankingVersionDatabase;
-import com.qxy.siegelions.entity.RankingEntry;
-import com.qxy.siegelions.entity.RankingEntryReq;
-import com.qxy.siegelions.web.RankingNetGet;
-
-import java.util.Date;
-import java.util.Objects;
+import android.content.Context
+import android.util.Log
+import com.qxy.siegelions.web.RankingNetGet
+import com.qxy.siegelions.entity.RankingEntry
+import com.qxy.siegelions.database.RankingEntryDatabase
+import androidx.room.Room
+import android.widget.Toast
+import com.qxy.siegelions.database.RankingVersionDatabase
+import java.util.*
 
 /**
  * 排名获取综合工具类
  * @author MadSamurai
  */
-public class RankingGetUtil {
-    private final Context mContext;
-
-    private RankingNetGet rankingNetGet;
-
-    public RankingGetUtil(Context mContext) {
-        this.mContext = mContext;
-    }
-
-    public RankingEntry[] getRankingEntry(int type, int version) {
-        final RankingEntry[][] rankingEntries = {null};
-
-        rankingNetGet = new RankingNetGet(mContext);
-        RankingEntryDatabase[] rankingEntryDatabase = {Room.databaseBuilder(mContext, RankingEntryDatabase.class, "ranking_entry_database")
+class RankingGetUtil(private val mContext: Context) {
+    private var rankingNetGet: RankingNetGet? = null
+    fun getRankingEntry(type: Int, version: Int): Array<RankingEntry>? {
+        val rankingEntries = arrayOf<Array<RankingEntry>?>(null)
+        rankingNetGet = RankingNetGet(mContext)
+        val rankingEntryDatabase = arrayOf(
+            Room.databaseBuilder(
+                mContext, RankingEntryDatabase::class.java, "ranking_entry_database"
+            )
                 .allowMainThreadQueries()
-                .build()};
-        RankingEntryDao rankingEntryDao = rankingEntryDatabase[0].getEntryDao();
-
+                .build()
+        )
+        val rankingEntryDao = rankingEntryDatabase[0].entryDao
         if (NetCheckUtil.isNetConnection(mContext)) {
-            Thread thread = new Thread(() -> {
+            val thread = Thread {
                 if (NetCheckUtil.isOnline()) {
-                    RankingEntryReq rankingEntryReq = rankingNetGet.getRanking(type, version);
-
-                    Log.d("version_id", version + "");
-                    assert rankingEntryReq != null;
-                    rankingEntries[0] = rankingEntryReq.getRankingEntry();
-                    for (RankingEntry rankingEntry : rankingEntries[0]) {
-                        assert rankingEntryDao != null;
-                        rankingEntry.setVersionId(version);
-                        Long id = rankingEntryDao.getIdByVersionAndRank(version, rankingEntry.getRank());
-                        Log.d("entry_id", id+"");
+                    val rankingEntryReq = rankingNetGet!!.getRanking(type, version)
+                    Log.d("version_id", version.toString() + "")
+                    assert(rankingEntryReq != null)
+                    rankingEntries[0] = rankingEntryReq!!.rankingEntry
+                    for (rankingEntry in rankingEntries[0]!!) {
+                        assert(rankingEntryDao != null)
+                        rankingEntry.versionId = version
+                        val id = rankingEntryDao!!.getIdByVersionAndRank(version, rankingEntry.rank)
+                        Log.d("entry_id", id.toString() + "")
                         if (id != null) {
-                            rankingEntry.setId(id);
-                            rankingEntryDao.updateEntry(rankingEntry);
-                        } else rankingEntryDao.insertEntry(rankingEntry);
+                            rankingEntry.id = id
+                            rankingEntryDao.updateEntry(rankingEntry)
+                        } else rankingEntryDao.insertEntry(rankingEntry)
                     }
                 } else {
-                    Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show();
-                    assert rankingEntryDao != null;
-                    rankingEntries[0] = rankingEntryDao.allEntryByVersion(version);
+                    Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show()
+                    assert(rankingEntryDao != null)
+                    rankingEntries[0] = rankingEntryDao!!.allEntryByVersion(version)
                 }
-            });
-            thread.start();
+            }
+            thread.start()
             try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                thread.join()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
         } else {
-            Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show();
-            assert rankingEntryDao != null;
-            rankingEntries[0] = rankingEntryDao.allEntryByVersion(version);
+            Toast.makeText(mContext, "无网络链接", Toast.LENGTH_LONG).show()
+            assert(rankingEntryDao != null)
+            rankingEntries[0] = rankingEntryDao!!.allEntryByVersion(version)
         }
-        return rankingEntries[0];
+        return rankingEntries[0]
     }
 
-    public RankingEntry[] getRankingEntry(int type){
-        RankingVersionDatabase rankingVersionDatabase = Room.databaseBuilder(mContext, RankingVersionDatabase.class, "ranking_version_database")
-                .allowMainThreadQueries()
-                .build();
-        RankingVersionDao rankingVersionDao = rankingVersionDatabase.getVersionDao();
-
-        assert rankingVersionDao != null;
-        int version = rankingVersionDao.getVersionIdByDate(new Date());
-        return this.getRankingEntry(type, version);
+    fun getRankingEntry(type: Int): Array<RankingEntry>? {
+        val rankingVersionDatabase = Room.databaseBuilder(
+            mContext, RankingVersionDatabase::class.java, "ranking_version_database"
+        )
+            .allowMainThreadQueries()
+            .build()
+        val rankingVersionDao = rankingVersionDatabase.versionDao!!
+        val version = rankingVersionDao.getVersionIdByDate(Date())
+        return this.getRankingEntry(type, version)
     }
 }
