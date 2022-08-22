@@ -7,9 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -41,7 +39,7 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class TiktokActivity extends AppCompatActivity {
     public static final String CODE_KEY = "code";
     public static Boolean isBoe = false;
 
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_tiktok);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.get_ranking).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this , MenuActivity.class);
+                Intent intent = new Intent(TiktokActivity.this , MenuActivity.class);
                 startActivity(intent);
             }
         });
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.go_to_system_picture).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityCompat.requestPermissions(MainActivity.this, mPermissionList, 100);
+                ActivityCompat.requestPermissions(TiktokActivity.this, mPermissionList, 100);
             }
         });
         findViewById(R.id.require_mobile).setOnClickListener(new View.OnClickListener() {
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     request.mState = "state";
                     douYinOpenApi.openRecordPage(request);
                 } else {
-                    Toast.makeText(MainActivity.this, "抖音版本不支持", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TiktokActivity.this, "抖音版本不支持", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -162,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 if (douYinOpenApi.isAppSupportShareToContacts()) {
                     shareToContact();
                 } else {
-                    Toast.makeText(MainActivity.this, "当前抖音版本不支持", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TiktokActivity.this, "当前抖音版本不支持", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -173,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 if (douYinOpenApi.isAppSupportShareToContacts()) {
                     shareToContactHtml();
                 } else {
-                    Toast.makeText(MainActivity.this, "当前抖音版本不支持", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TiktokActivity.this, "当前抖音版本不支持", Toast.LENGTH_LONG).show();
                 }
             }
         });

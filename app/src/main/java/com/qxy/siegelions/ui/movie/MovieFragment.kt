@@ -115,10 +115,9 @@ class MovieFragment : Fragment() {
             listView.adapter = entryAdapter
         })
 
-        val date = Date();
-        val version = rankingVersionDao?.getVersionIdByDate(date)
+        val rankingGetUtil = RankingGetUtil(context)
+        val entries = rankingGetUtil.getRankingEntry(1)
 
-        val entries = version?.let { rankingEntryDao?.allEntryByVersion(it) }
         entryAdapter = EntryAdapter(entries, context)
         listView.adapter = entryAdapter
 
