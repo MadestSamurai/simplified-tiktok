@@ -10,13 +10,9 @@ import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.qxy.siegelions.R
-import com.qxy.siegelions.database.RankingEntryDatabase
-import com.qxy.siegelions.database.RankingVersionDatabase
 import com.qxy.siegelions.databinding.FragmentShowBinding
 import com.qxy.siegelions.ui.EntryAdapter
 import com.qxy.siegelions.util.RankingGetUtil
@@ -40,41 +36,17 @@ class ShowFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        ViewModelProvider(this).get(
-            ShowViewModel::class.java
-        )
 
         binding = FragmentShowBinding.inflate(inflater, container, false)
-        val root: View = binding!!.root
         val view = inflater.inflate(R.layout.fragment_show, container, false)
         listView = view.findViewById(R.id.list_view)
 
-        val rankingVersionGetUtil = RankingVersionGetUtil(context)
-        rankingVersionGetUtil.saveRankingVersion(3)
-
-        val rankingEntryDatabase = context?.let {
-            Room.databaseBuilder(
-                it,
-                RankingEntryDatabase::class.java, "ranking_entry_database"
-            ) //new a database
-                .allowMainThreadQueries()
-                .build()
-        }
-        val rankingEntryDao = rankingEntryDatabase?.entryDao
+        val rankingVersionGetUtil = context?.let { RankingVersionGetUtil(it) }
+        rankingVersionGetUtil?.saveRankingVersion(3)
 
         val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         refreshTime = view.findViewById(R.id.info_refresh_date)
         refreshTime.text = "$fmt 更新"
-
-        val rankingVersionDatabase = context?.let {
-            Room.databaseBuilder(
-                it,
-                RankingVersionDatabase::class.java, "ranking_version_database"
-            ) //new a database
-                .allowMainThreadQueries()
-                .build()
-        }
-        val rankingVersionDao = rankingVersionDatabase?.versionDao
 
         refreshLayout = view.findViewById(R.id.refresh_layout)
         refreshLayout.setProgressBackgroundColorSchemeColor(Color.LTGRAY) //刷新控件的背景

@@ -41,41 +41,17 @@ class TeleplayFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        ViewModelProvider(this).get(
-            TeleplayViewModel::class.java
-        )
 
         binding = FragmentTeleplayBinding.inflate(inflater, container, false)
-        val root: View = binding!!.root
         val view = inflater.inflate(R.layout.fragment_teleplay, container, false)
         listView = view.findViewById(R.id.list_view)
 
-        val rankingVersionGetUtil = RankingVersionGetUtil(context)
-        rankingVersionGetUtil.saveRankingVersion(2)
-
-        val rankingEntryDatabase = context?.let {
-            Room.databaseBuilder(
-                it,
-                RankingEntryDatabase::class.java, "ranking_entry_database"
-            ) //new a database
-                .allowMainThreadQueries()
-                .build()
-        }
-        val rankingEntryDao = rankingEntryDatabase?.entryDao
+        val rankingVersionGetUtil = context?.let { RankingVersionGetUtil(it) }
+        rankingVersionGetUtil?.saveRankingVersion(2)
 
         val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         refreshTime = view.findViewById(R.id.info_refresh_date)
         refreshTime.text = "$fmt 更新"
-
-        val rankingVersionDatabase = context?.let {
-            Room.databaseBuilder(
-                it,
-                RankingVersionDatabase::class.java, "ranking_version_database"
-            ) //new a database
-                .allowMainThreadQueries()
-                .build()
-        }
-        val rankingVersionDao = rankingVersionDatabase?.versionDao
 
         refreshLayout = view.findViewById(R.id.refresh_layout)
         refreshLayout.setProgressBackgroundColorSchemeColor(Color.LTGRAY) //刷新控件的背景
