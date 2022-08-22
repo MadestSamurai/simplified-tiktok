@@ -11,9 +11,8 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-19
- * description 主页fragment
+ * 主页碎片类
+ * @author MadSamurai
  */
 class MainFragment : BaseFragment() {
     private var currentLocationFragment: CurrentLocationFragment? = null

@@ -6,6 +6,10 @@ import com.qxy.siegelions.base.BaseFragment
 import com.qxy.siegelions.entity.DataCreate
 import kotlinx.android.synthetic.main.fragment_fans.*
 
+/**
+ * 粉丝碎片类
+ * @author MadSamurai
+ */
 class FansFragment : BaseFragment() {
     private var fansAdapter: FansAdapter? = null
 

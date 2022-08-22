@@ -19,9 +19,8 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * create by libo
- * create on 2020-05-25
- * description
+ * 私信碎片类
+ * @author MadSamurai
  */
 public class PrivateLetterAdapter extends BaseRvAdapter<Video.User, PrivateLetterAdapter.PrivateLetterViewHolder> {
 

@@ -18,13 +18,10 @@ import com.qxy.siegelions.view.LikeView;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
- * create by libo
- * create on 2020-05-20
- * description
+ * 视频适配类
+ * @author MadSamurai
  */
 public class VideoAdapter extends BaseRvAdapter<Video, VideoAdapter.VideoViewHolder> {
 

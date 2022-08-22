@@ -7,9 +7,8 @@ import com.qxy.siegelions.util.autolinktextview.AutoLinkMode
 import com.qxy.siegelions.util.autolinktextview.AutoLinkTextView
 
 /**
- * create by libo
- * create on 2020-05-21
- * description
+ * 自动连接管理类
+ * @author MadSamurai
  */
 object AutoLinkHerfManager {
     /**

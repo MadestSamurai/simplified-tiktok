@@ -24,6 +24,10 @@ import com.qxy.siegelions.util.RankingVersionGetUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * 综艺数据页碎片类
+ * @author akkcdb110
+ */
 class ShowFragment : Fragment() {
     private var binding: FragmentShowBinding? = null
     private lateinit var listView: ListView

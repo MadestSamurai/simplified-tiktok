@@ -7,6 +7,10 @@ import androidx.room.Update
 import com.qxy.siegelions.entity.RankingVersion
 import java.util.*
 
+/**
+ * Room Dao
+ * @author yangqiangli
+ */
 @Dao
 interface RankingVersionDao {
     @Insert

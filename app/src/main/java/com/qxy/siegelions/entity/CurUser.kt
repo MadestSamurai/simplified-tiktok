@@ -3,8 +3,7 @@ package com.qxy.siegelions.entity
 import com.qxy.siegelions.entity.Video.User
 
 /**
- * create by libo
- * create on 2020-06-04
- * description 当前播放视频的作者Userbean切换
+ * 当前用户实体类
+ * @author MadSamurai
  */
 class CurUser(var user: User)

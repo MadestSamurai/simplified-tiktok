@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.qxy.siegelions.R
 import com.qxy.siegelions.ui.CommentAdapter
-import com.qxy.siegelions.entity.CommentBean
+import com.qxy.siegelions.entity.Comment
 import com.qxy.siegelions.entity.DataCreate
 import kotlinx.android.synthetic.main.dialog_comment.*
 import java.util.*
@@ -20,7 +20,7 @@ import java.util.*
 class CommentDialog : BaseBottomSheetDialog() {
 
     private var commentAdapter: CommentAdapter? = null
-    private val datas = ArrayList<CommentBean>()
+    private val datas = ArrayList<Comment>()
     private val likeArray = intArrayOf(4919, 334, 121, 423, 221, 23)
     private val commentArray = arrayOf("我就说左脚踩右脚可以上天你们还不信！", "全是评论点赞，没人关注吗", "哈哈哈哈", "像谁，没看出来", "你这西安话真好听")
 
@@ -43,11 +43,11 @@ class CommentDialog : BaseBottomSheetDialog() {
 
     private fun loadData() {
         for (i in DataCreate.userList.indices) {
-            val commentBean = CommentBean()
-            commentBean.user = DataCreate.userList[i]
-            commentBean.content = commentArray[(Math.random() * commentArray.size).toInt()]
-            commentBean.likeCount = likeArray[(Math.random() * likeArray.size).toInt()]
-            datas.add(commentBean)
+            val comment = Comment()
+            comment.user = DataCreate.userList[i]
+            comment.content = commentArray[(Math.random() * commentArray.size).toInt()]
+            comment.likeCount = likeArray[(Math.random() * likeArray.size).toInt()]
+            datas.add(comment)
         }
         commentAdapter!!.notifyDataSetChanged()
     }

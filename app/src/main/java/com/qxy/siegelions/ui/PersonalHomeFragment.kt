@@ -24,9 +24,8 @@ import rx.functions.Action1
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-05-19
- * description 个人主页fragment
+ * 个人首页碎片类
+ * @author MadSamurai
  */
 class PersonalHomeFragment : BaseFragment(), View.OnClickListener {
     private val fragments = ArrayList<Fragment>()

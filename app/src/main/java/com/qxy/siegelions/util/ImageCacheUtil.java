@@ -16,6 +16,10 @@ import android.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 
+/**
+ * 图像三级缓存工具类
+ * @author MadSamurai
+ */
 public class ImageCacheUtil implements ImageCache {
 
     /**

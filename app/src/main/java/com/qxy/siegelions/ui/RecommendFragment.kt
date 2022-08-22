@@ -23,9 +23,8 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
 import rx.functions.Action1
 
 /**
- * create by libo
- * create on 2020-05-19
- * description 推荐播放页
+ * 推荐播放页碎片类
+ * @author MadSamurai
  */
 class RecommendFragment : BaseFragment() {
     private var adapter: VideoAdapter? = null

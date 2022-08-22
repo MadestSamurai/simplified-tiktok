@@ -8,9 +8,8 @@ import com.qxy.siegelions.entity.DataCreate
 import kotlinx.android.synthetic.main.fragment_current_location.*
 
 /**
- * create by libo
- * create on 2020-05-19
- * description 附近的人fragment
+ * 当前浏览位置碎片类
+ * @author MadSamurai
  */
 class CurrentLocationFragment : BaseFragment() {
     private var adapter: GridVideoAdapter? = null

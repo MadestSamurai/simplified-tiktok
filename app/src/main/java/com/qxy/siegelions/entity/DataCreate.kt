@@ -5,9 +5,8 @@ import com.qxy.siegelions.entity.Video.User
 import java.util.*
 
 /**
- * create by libo
- * create on 2020-06-03
- * description 本地数据创建，代替接口获取数据
+ * 本地数据创建，代替接口获取数据
+ * @author MadSamurai
  */
 class DataCreate {
 

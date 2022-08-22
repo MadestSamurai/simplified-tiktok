@@ -13,6 +13,10 @@ import com.qxy.siegelions.web.RankingNetGet;
 
 import java.util.Objects;
 
+/**
+ * 排名版本综合获取工具类
+ * @author MadSamurai
+ */
 public class RankingVersionGetUtil {
     private final Context mContext;
 

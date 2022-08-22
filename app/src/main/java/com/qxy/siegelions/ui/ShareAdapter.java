@@ -11,28 +11,25 @@ import androidx.annotation.NonNull;
 import com.qxy.siegelions.R;
 import com.qxy.siegelions.base.BaseRvAdapter;
 import com.qxy.siegelions.base.BaseRvViewHolder;
-import com.qxy.siegelions.entity.ShareBean;
+import com.qxy.siegelions.entity.Share;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
- * create by libo
- * create on 2020-05-25
- * description
+ * 分享适配类
+ * @author MadSamurai
  */
-public class ShareAdapter extends BaseRvAdapter<ShareBean, ShareAdapter.ShareViewHolder> {
+public class ShareAdapter extends BaseRvAdapter<Share, ShareAdapter.ShareViewHolder> {
 
-    public ShareAdapter(Context context, List<ShareBean> datas) {
+    public ShareAdapter(Context context, List<Share> datas) {
         super(context, datas);
     }
 
     @Override
-    protected void onBindData(ShareViewHolder holder, ShareBean shareBean, int position) {
-        holder.tvIcon.setText(shareBean.getIconRes());
-        holder.tvText.setText(shareBean.getText());
-        holder.viewBg.setBackgroundResource(shareBean.getBgRes());
+    protected void onBindData(ShareViewHolder holder, Share share, int position) {
+        holder.tvIcon.setText(share.getIconRes());
+        holder.tvText.setText(share.getText());
+        holder.viewBg.setBackgroundResource(share.getBgRes());
     }
 
     @NonNull

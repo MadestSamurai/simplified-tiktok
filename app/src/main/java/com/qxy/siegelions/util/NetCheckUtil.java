@@ -9,6 +9,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * 网络链接判定工具类
+ * @author MadSamurai
+ */
 public class NetCheckUtil {
     /**
      * 判断当前是否有网络连接,但是如果该连接的网络无法上网，也会返回true

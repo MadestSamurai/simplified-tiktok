@@ -11,31 +11,28 @@ import androidx.annotation.NonNull;
 import com.qxy.siegelions.R;
 import com.qxy.siegelions.base.BaseRvAdapter;
 import com.qxy.siegelions.base.BaseRvViewHolder;
-import com.qxy.siegelions.entity.CommentBean;
+import com.qxy.siegelions.entity.Comment;
 import com.qxy.siegelions.util.NumUtils;
 import com.qxy.siegelions.view.CircleImageView;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
- * create by libo
- * create on 2020-05-24
- * description
+ * 评论数据适配类
+ * @author MadSamurai
  */
-public class CommentAdapter extends BaseRvAdapter<CommentBean, CommentAdapter.CommentViewHolder> {
+public class CommentAdapter extends BaseRvAdapter<Comment, CommentAdapter.CommentViewHolder> {
 
-    public CommentAdapter(Context context, List<CommentBean> datas) {
+    public CommentAdapter(Context context, List<Comment> datas) {
         super(context, datas);
     }
 
     @Override
-    protected void onBindData(CommentViewHolder holder, CommentBean commentBean, int position) {
-        holder.ivHead.setImageResource(commentBean.getUser().getHead());
-        holder.tvNickname.setText(commentBean.getUser().getNickName());
-        holder.tvContent.setText(commentBean.getContent());
-        holder.tvLikecount.setText(NumUtils.numberFilter(commentBean.getLikeCount()));
+    protected void onBindData(CommentViewHolder holder, Comment comment, int position) {
+        holder.ivHead.setImageResource(comment.getUser().getHead());
+        holder.tvNickname.setText(comment.getUser().getNickName());
+        holder.tvContent.setText(comment.getContent());
+        holder.tvLikecount.setText(NumUtils.numberFilter(comment.getLikeCount()));
     }
 
     @NonNull

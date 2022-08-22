@@ -6,9 +6,8 @@ import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
 /**
- * create by libo
- * create on 2020/5/21
- * description RxBus管理类
+ * RxBus管理类
+ * @author MadSamurai
  */
 public class RxBus {
     private static volatile RxBus instance;

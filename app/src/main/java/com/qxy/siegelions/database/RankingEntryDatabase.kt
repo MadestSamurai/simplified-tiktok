@@ -8,6 +8,10 @@ import androidx.room.RoomDatabase
 import com.qxy.siegelions.converter.StringConverter
 import com.qxy.siegelions.dao.RankingEntryDao
 
+/**
+ * Room 数据库
+ * @author yangqiangli
+ */
 @Database(entities = [RankingEntry::class], version = 1)
 @TypeConverters(StringConverter::class, DateConverter::class)
 abstract class RankingEntryDatabase : RoomDatabase() {
